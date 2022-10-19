@@ -20,3 +20,5 @@ Imports:
     jsonlite,
     stringr,
     httr
+URL: https://github.com/favstats/metatargetr
+BugReports: https://github.com/favstats/metatargetr/issues
