@@ -68,3 +68,5 @@ get_targeting <- function(id, timeframe = "LAST_30_DAYS") {
     return(res)
 
 }
+
+get_targeting <- suppressWarnings(get_targeting)
