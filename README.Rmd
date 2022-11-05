@@ -55,6 +55,8 @@ head(last30, 5)
 
 The following code retrieves the targeting criteria used by the Social Democrats in Denmark in the last 7 days. Just put in the right Page ID.
 
+
+
 ```{r}
 last7 <- get_targeting("41459763029", timeframe = "LAST_7_DAYS")
 

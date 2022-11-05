@@ -1,5 +1,22 @@
 get_targeting <- function(id, timeframe = "LAST_30_DAYS") {
 
+    url <- "https://www.facebook.com/api/graphql/"
+
+    heads_up <- httr::add_headers(`User-Agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/93.0",
+                                  Accept = "*/*",
+                                  `Accept-Language` = 'en-US,en;q=0.5',
+                                  `X-FB-Friendly-Name` = "AdLibraryPageAudienceTabQuery",
+                                  `X-FB-LSD`= "AVrNiQCSUnA",
+                                  `Alt-Used`= "www.facebook.com",
+                                  `Sec-Fetch-Dest`= "empty",
+                                  `Sec-Fetch-Mode`= "cors",
+                                  `Sec-Fetch-Site`= "same-origin",
+                                  # `Accept-Encoding` = "gzip, deflate, br",
+                                  `Content-Type` = "application/x-www-form-urlencoded",
+                                  Connection = "keep-alive"
+    )
+
+
     if(timeframe == "LAST_30_DAYS"){
 
         # audienceTimeframe <- "%7B%22audienceTimeframe%22%3A%22LAST_30_DAYS%22%2C%22"
@@ -11,27 +28,31 @@ get_targeting <- function(id, timeframe = "LAST_30_DAYS") {
         da_body <- glue::glue("av=0&__user=0&__a=1&__dyn=7xeUmxa3-Q8zo5ObwKBWobVo9E4a2i5U4e1FxebzEdF8aUuxa1ZzES2S2q2i13w9m7oqx60Vo1upEK12wcG0KEswIwuo662y11xmfz81sbzoaEd86a0HU9k2C2218wc61uBxi2a48O0zE-Uqwl8cUjwdq79UbobEaUtws8nwhE2LxiawCw46wJwSyES0gq0K-1bwzwqobU&__csr=&__req=f&__hs=19245.BP%3ADEFAULT.2.0.0.0.0&dpr=1&__ccg=EXCELLENT&__rev=1006179750&__s=njkc5w%3A6o847a%3A9gcoa8&__hsi=7141736891942848978&__comet_req=0&lsd=AVrbeuAiHJg&jazoest=21000&__spin_r=1006179750&__spin_b=trunk&__spin_t=1662815197&__jssesw=1&fb_api_caller_class=RelayModern&fb_api_req_friendly_name=AdLibraryPageAudienceTabQuery&variables=%7B%22audienceTimeframe%22%3A%22LAST_7_DAYS%22%2C%22viewAllPageID%22%3A%22{id}%22%7D&server_timestamps=true&doc_id=4756112137823411") %>% as.character()
 
     } else if (timeframe == "LAST_90_DAYS"){
-     
-        da_body <- glue::glue("av=0&__user=0&__a=1&__dyn=7xeUmxa3-Q8zo5ObwKBWobVo9E4a2i5U4e1FxebzEdF8aUuxa1ZzES2S2q2i13w9m7oqx60Vo1upEK12wcG0KEswIwuo662y11xmfz81sbzoaEd86a0HU9k2C2218wc61uBxi2a48O3u1mzXxG1kwPxe3C0D8sDwJwKwHxS1Mxu16wa-58G2q0gq2S3qazo11E2XU4K2e1FwLw8O2i&__csr=&__req=z&__hs=19301.BP%3ADEFAULT.2.0.0.0.0&dpr=1.5&__ccg=EXCELLENT&__rev=1006553851&__s=qfv4l1%3Axov627%3Ahhfasy&__hsi=7162559344468688879&__comet_req=0&fb_dtsg=NAcO4Gs2-x5cx6tmQOdkY7tQziWSDfaZaEh_pqlh4ChcTKUl9n2KQ3g%3A29%3A1657199605&jazoest=25542&lsd=DuiIwhZNa_ziR1QCj8ie0F&__aaid=570638747258088&__spin_r=1006553851&__spin_b=trunk&__spin_t=1667663301&__jssesw=1&fb_api_caller_class=RelayModern&fb_api_req_friendly_name=AdLibraryPageAudienceTabQuery&variables=%7B%22audienceTimeframe%22%3A%22LAST_90_DAYS%22%2C%22viewAllPageID%22%3A%22{id}%22%7D&server_timestamps=true&doc_id=4756112137823411") %>% as.character()
+
+        da_body <- glue::glue("av=100000159746293&__user=100000159746293&__a=1&__dyn=7xeUmxa3-Q8zo5ObwKBWobVo9E4a2i5U4e1FxebzEdF8aUuxa1ZzES2S2q2i13w9m7oqx60Vo1upEK12wcG0KEswIwuo662y11xmfz81sbzoaEd86a0HU9k2C2218wc61uBxi2a48O3u1mzXxG1kwPxe3C0D8sDwJwKwHxS1Mxu16wa-58G2q0gq2S3qazo11E2XU4K2e1FwLw8O2i&__csr=&__req=z&__hs=19301.BP%3ADEFAULT.2.0.0.0.0&dpr=1.5&__ccg=EXCELLENT&__rev=1006553851&__s=qfv4l1%3Axov627%3Ahhfasy&__hsi=7162559344468688879&__comet_req=0&fb_dtsg=NAcO4Gs2-x5cx6tmQOdkY7tQziWSDfaZaEh_pqlh4ChcTKUl9n2KQ3g%3A29%3A1657199605&jazoest=25542&lsd=DuiIwhZNa_ziR1QCj8ie0F&__aaid=570638747258088&__spin_r=1006553851&__spin_b=trunk&__spin_t=1667663301&__jssesw=1&fb_api_caller_class=RelayModern&fb_api_req_friendly_name=AdLibraryPageAudienceTabQuery&variables=%7B%22audienceTimeframe%22%3A%22LAST_90_DAYS%22%2C%22viewAllPageID%22%3A%22{id}%22%7D&server_timestamps=true&doc_id=4756112137823411") %>% as.character()
+
+
+        url <- "https://www.facebook.com/api/graphql/"
+
+        heads_up <- httr::add_headers(`User-Agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/93.0",
+                                      Accept = "*/*",
+                                      `Accept-Language` = 'en-US,en;q=0.5',
+                                      `X-FB-Friendly-Name` = "AdLibraryPageAudienceTabQuery",
+                                      `X-FB-LSD`= "AVrNiQCSUnA",
+                                      `Alt-Used`= "www.facebook.com",
+                                      `Sec-Fetch-Dest`= "empty",
+                                      `Sec-Fetch-Mode`= "cors",
+                                      `Sec-Fetch-Site`= "same-origin",
+                                      cookie = "datr=vOypYnSo2R2vnwo4VFcqmtcb; sb=xOypYvBAW45oQHpiWUNSv52M; c_user=100000159746293; dpr=1.5; fr=0qjq9hnTfgf3DIzZt.AWXsCioyCMFIhol5wmWzI2q3byk.BjZNQr.Mb.AAA.0.0.BjZjG9.AWWpxS79b1E; presence=C%7B%22t3%22%3A%5B%7B%22i%22%3A%22u.674535641%22%7D%5D%2C%22utc3%22%3A1667643774620%2C%22v%22%3A1%7D; oo=v1; xs=29%3ATTDNIdhAN1-Ovw%3A2%3A1657199605%3A-1%3A13574%3A%3AAcVrSfM8EYX4RcS8XClOT9f5htRwvHsy9E2uSTXFwjit; wd=444x616",
+                                      # `Accept-Encoding` = "gzip, deflate, br",
+                                      `Content-Type` = "application/x-www-form-urlencoded",
+                                      Connection = "keep-alive"
+        )
+
     }
 
 
 
-    url <- "https://www.facebook.com/api/graphql/"
-
-    heads_up <- httr::add_headers(`User-Agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/93.0",
-                            Accept = "*/*",
-                            `Accept-Language` = 'en-US,en;q=0.5',
-                            `X-FB-Friendly-Name` = "AdLibraryPageAudienceTabQuery",
-                            `X-FB-LSD`= "AVrNiQCSUnA",
-                            `Alt-Used`= "www.facebook.com",
-                            `Sec-Fetch-Dest`= "empty",
-                            `Sec-Fetch-Mode`= "cors",
-                            `Sec-Fetch-Site`= "same-origin",
-                            # `Accept-Encoding` = "gzip, deflate, br",
-                            `Content-Type` = "application/x-www-form-urlencoded",
-                            Connection = "keep-alive"
-    )
 
 
     posted = httr::POST(url, heads_up, body = da_body)
