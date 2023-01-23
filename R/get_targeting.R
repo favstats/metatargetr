@@ -58,7 +58,7 @@ get_targeting <- function(id, timeframe = "LAST_30_DAYS") {
     contentwise <- httr::content(posted)
 
 
-    out_raw <- jsonlite::fromJSON(contentwise) %>%
+    out_raw <- contentwise %>%
     rvest::html_nodes("body") %>% 
     rvest::html_nodes("p") %>% 
     as.character() %>% str_remove_all("</p>|<p>") %>%
