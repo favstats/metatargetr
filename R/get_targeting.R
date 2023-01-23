@@ -59,9 +59,13 @@ get_targeting <- function(id, timeframe = "LAST_30_DAYS") {
 
 
     out_raw <- jsonlite::fromJSON(contentwise) %>%
-        purrr::pluck("data") %>%
-        purrr::pluck("page") %>%
-        purrr::pluck("ad_library_page_targeting_insight")
+    rvest::html_nodes("body") %>% 
+    rvest::html_nodes("p") %>% 
+    as.character() %>% str_remove_all("</p>|<p>") %>%
+    jsonlite::fromJSON()  %>%
+    purrr::pluck("data") %>%
+    purrr::pluck("page") %>%
+    purrr::pluck("ad_library_page_targeting_insight")
 
 
     summary_dat <- out_raw %>%
