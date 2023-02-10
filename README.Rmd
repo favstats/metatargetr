@@ -2,6 +2,8 @@
 output: github_document
 ---
 
+# metatargetr <img src="man/figures/metatargetr_logo.png" width="160px" align="right"/>
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
@@ -15,14 +17,14 @@ knitr::opts_chunk$set(
 source("R/get_targeting.R")
 ```
 
-# metatargetr
+
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/metatargetr)](https://CRAN.R-project.org/package=metatargetr)
 <!-- badges: end -->
 
-The goal of metatargetr is to ...
+The goal of `metatargetr` is to parse targeting information from the [Meta Ad Targeting dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/) as well as retrieve data from the [Audience tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all) in the Meta Ad Library.
 
 ## Installation
 
@@ -32,34 +34,33 @@ You can install the development version of metatargetr like so:
 remotes::install_github("favstats/metatargetr")
 ```
 
-## Example
+## Load in Package
 
-This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(metatargetr)
-## basic example code
 ```
 
 ## Get Targeting criteria (Last 30 Days)
 
-The following code retrieves the targeting criteria used by the Social Democrats in Denmark in the last 30 days. Just put in the right Page ID.
+The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 30 days. Just put in the right Page ID.
 
 ```{r cars}
-last30<- get_targeting("41459763029", timeframe = "LAST_30_DAYS")
 
-head(last30, 5)
+last30<- get_targeting("121264564551002", timeframe = "LAST_30_DAYS")
+
+head(last30, 10)
 ```
 
 ## Get Targeting criteria (Last 7 Days)
 
-The following code retrieves the targeting criteria used by the Social Democrats in Denmark in the last 7 days. Just put in the right Page ID.
+The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 7 days. Just put in the right Page ID.
 
 
 
 ```{r}
-last7 <- get_targeting("41459763029", timeframe = "LAST_7_DAYS")
+last7 <- get_targeting("121264564551002", timeframe = "LAST_7_DAYS")
 
 
-head(last7, 5)
+head(last7, 10)
 ```

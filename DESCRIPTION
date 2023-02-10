@@ -1,8 +1,8 @@
 Package: metatargetr
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Retrieve and Parse Meta Ad Targeting Data
+Version: 0.0.1.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("Fabio", "Votta", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
@@ -11,7 +11,7 @@ Suggests:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.2
 Imports: 
     magrittr,
     glue,
@@ -19,6 +19,7 @@ Imports:
     purrr,
     jsonlite,
     stringr,
+    tibble,
     httr
 URL: https://github.com/favstats/metatargetr
 BugReports: https://github.com/favstats/metatargetr/issues
