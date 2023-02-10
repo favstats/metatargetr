@@ -1,5 +1,5 @@
 #' @title Parse Location from Ad Targeting Dataset
-#' @description A function to parse a location string in JSON format and split into separate columns for each level of detail.
+#' @description A function to parse the location strings in the Ad Targeting Dataset and split into separate columns for each level of detail.
 #' @param .x A data.frame containing the location string
 #' @param loc_var A character string specifying the name of the column in .x that contains the location string
 #' @param type A character string specifying the prefix to add to each column of split location details. Default is "include". Should be "include" or "exclude".

@@ -45,11 +45,12 @@ library(metatargetr)
 
 The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 30 days. Just put in the right Page ID.
 
-```{r cars}
+```{r}
 
-last30<- get_targeting("121264564551002", timeframe = "LAST_30_DAYS")
+last30 <- get_targeting("121264564551002", timeframe = "LAST_30_DAYS")
 
-head(last30, 10)
+head(last30, 5)
+
 ```
 
 ## Get Targeting criteria (Last 7 Days)
@@ -62,5 +63,5 @@ The following code retrieves the targeting criteria used by the main page of the
 last7 <- get_targeting("121264564551002", timeframe = "LAST_7_DAYS")
 
 
-head(last7, 10)
+head(last7, 5)
 ```
