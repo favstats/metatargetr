@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 
-source("R/get_targeting.R")
+#source("R/get_targeting.R")
 ```
 
 
