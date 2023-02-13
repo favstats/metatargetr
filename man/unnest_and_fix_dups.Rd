@@ -31,6 +31,5 @@ ad_targeting_data \%>\%
     ungroup() \%>\%
     ## the_list: the parsed list of JSON, new_name: what the parsed column should be called
    unnest_and_fix_dups(the_list = include_list, new_name = "parsed_include")
-'
-' @export
+
 }

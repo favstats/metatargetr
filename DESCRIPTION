@@ -1,6 +1,6 @@
 Package: metatargetr
 Title: Retrieve and Parse Meta Ad Targeting Data
-Version: 0.0.1.9000
+Version: 0.0.1.9001
 Authors@R: 
     person("Fabio", "Votta", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
