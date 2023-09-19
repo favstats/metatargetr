@@ -1,0 +1,279 @@
+
+library(tidyverse)
+
+page_id_dat <- readRDS("data/page_id_dat.rds")
+
+ad_library_about <- function(the_url, reconnect = F) {
+    remDr$navigate(the_url)
+    Sys.sleep(0.5)
+    # Get the webpage HTML
+    # html <<- rvest::session(url) %>% rvest::read_html()
+    # chrr <- as.character(html)
+    # chrr <- httr::GET(url) %>% .[["content"]] %>% rawToChar
+    thth <- remDr$getPageSource() %>% .[[1]] %>% read_html()
+    chrr <- as.character(thth)
+    # print("11")
+    if(str_detect(chrr, "Page has been deleted|unpublished")) {
+        write_csv(tibble(ad_library_url = the_url), "data/deleted_pages.csv", append = T)
+    }
+
+    if(reconnect & str_detect(chrr, "temporarily blocked")){
+        print("reconnect..")
+        system2("powershell.exe", args = c("-Command", "Restart-NetAdapter -Name \"WiFi\""), wait = TRUE, invisible = FALSE)
+        Sys.sleep(60*1)
+        # counter <<- 0
+    }
+
+    # print("22")
+    # print(chrr)
+    str_extract(chrr, 'about:\\{.*?\\}')
+
+}
+
+
+library(RSelenium)
+
+# https://adstransparency.google.com/advertiser/AR09355418985304162305?political&region=NL&preset-date=Last%207%20days
+
+
+library(netstat)
+library(RSelenium)
+
+# Randomize the user agent
+ua_list <- c(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0"
+)
+ua <- sample(ua_list, 1)
+
+# Randomize other browser options
+disable_images <- sample(c(TRUE, FALSE), 1)
+disable_javascript <- sample(c(TRUE, FALSE), 1)
+
+# Start the Selenium server with random options
+podf <- sample(4000L:5000L, 1)
+rD <- rsDriver(
+    browser = "firefox",
+    chromever = NULL,
+    check = FALSE,
+    port = podf,
+    verbose = TRUE,
+    extraCapabilities = list(
+        firefoxOptions = list(
+            args = c(
+                "-headless",
+                "-disable-gpu",
+                "-disable-extensions",
+                "-mute-audio",
+                "-no-sandbox",
+                "-disable-dev-shm-usage",
+                paste0("-user-agent='", ua, "'"),
+                paste0("-blink-settings=imagesEnabled=", !disable_images),
+                paste0("-javascriptEnabled=", !disable_javascript)
+            )
+        )
+    )
+)
+
+
+remDr <- rD$client
+
+library(rvest)
+
+
+# url <- "https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&view_all_page_id=7860876103&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all"
+
+
+# ad_library_about("https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&view_all_page_id=114706870277904&search_type=page&media_type=all")
+
+# (html)
+
+# ad_library_about("https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=FR&view_all_page_id=100129489256827&search_type=page&media_type=all")
+
+# ad_library_about("https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&view_all_page_id=7860876103&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all")
+
+# get_proxy <- function(){
+#   if(Sys.getenv("BINANCE_PROXY") == "") return("")
+#
+#   stringr::str_split(Sys.getenv("BINANCE_PROXY"), ":")[[1]]
+# }
+#
+# get_proxy_user <- function(){
+#   if(Sys.getenv("BINANCE_USERPW") == "") return("")
+#
+#   stringr::str_split(Sys.getenv("BINANCE_USERPW"), ":")[[1]]
+# }
+#
+# add_proxy <- function(){
+#   httr::use_proxy(url = get_proxy()[1],
+#                   port = as.numeric(get_proxy()[2]),
+#                   username = get_proxy_user()[1],
+#                   password = get_proxy_user()[2])
+# }
+
+# tmp_res <- httr::GET(url,
+#                      add_proxy(),
+#                      httr::add_headers(.headers = account_headers()))
+
+
+ad_library_about_pos <- possibly(ad_library_about, otherwise = NA, quiet = F)
+
+
+get_new <- function(page_id_dat, reconnect = F) {
+
+    # yooo <- c(
+    #   readRDS("where_abouts.rds") %>% drop_na() %>% .$page_id,
+    #   where_abouts2 %>% drop_na() %>% .$page_id
+    # ) %>% unique()
+
+    where_abouts2 <<- page_id_dat %>%
+        sample_n(n()) %>%
+        split(1:nrow(.)) %>%
+        map_dfr_progress(~{
+            # browser()
+            # print("1")
+            this_is_it <<- tibble(page_id = .x$page_id,
+                                  about_text = ad_library_about_pos(.x$ad_library_link, reconnect))
+
+            # print("2")
+            if(is.na(this_is_it$about_text)){
+                counter <<- counter + 1
+                if(counter %% 5 == 0){
+                    print(paste0("its NA: ", counter))
+                }
+            } else {
+                counter <<- 0
+                saveRDS(this_is_it, paste0("data/abouts/", .x$page_id, ".rds"))
+            }
+
+            if(counter > 100){
+                # print("reconnect..")
+                # system2("powershell.exe", args = c("-Command", "Restart-NetAdapter -Name \"WiFi\""), wait = TRUE, invisible = FALSE)
+                # Sys.sleep(60*1)
+                # counter <<- 0
+            }
+        })
+    # filter(!(page_id %in% yooo)) %>%
+    # sample_n(10) %>%
+    # rowwise() %>%
+    # mutate(about_text = ad_library_link %>% map_chr_progress(ad_library_about_pos)) %>%
+    #   # ungroup() %>%
+    #   select(page_id, about_text)
+    #
+    # print(nrow(where_abouts2))
+
+    # saveRDS(where_abouts %>% bind_rows(where_abouts2) %>% distinct(), file = "where_abouts.rds")
+
+}
+
+counter <- 0
+
+library(tidyverse)
+
+already_there <- dir("data/abouts") %>%
+    str_remove_all("\\.rds")
+#
+# rstudioapi::jobRunScript("get_about_text3.R")
+# rstudioapi::jobRunScript("get_about_text4.R")
+# rstudioapi::jobRunScript("get_about_text5.R")
+
+# library(furrr)
+# library(future)
+
+# plan(multisession, workers = 10)
+
+# batch_name <- 0
+
+# page_id_dat %>%
+#   distinct(page_id, .keep_all = T) %>%
+#   # slice(140001:n()) %>%
+#   filter((page_id %in% about_dat$page_id)) %>%
+#   filter((page_id %in% already_there))
+
+about_dat <- readRDS("data/about_dat.rds")
+
+deleted_pages <- read_csv("data/deleted_pages.csv") %>% distinct() %>%
+    mutate(page_id = str_extract(ad_library_url, "view_all_page_id=.*&search") %>%
+               str_remove_all("view_all_page_id=|&search"))
+
+# sdo <- "https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=FR&view_all_page_id=100129489256827&search_type=page&media_type=all"
+
+
+splitted <- page_id_dat %>%
+    # slice(1:80000) %>%
+    sample_frac(1) %>%
+    filter(!(page_id %in% about_dat$page_id)) %>%
+    filter(!(page_id %in% already_there)) %>%
+    filter(!(page_id %in% deleted_pages$page_id)) %>%
+    mutate(runni = 1:n()) %>%
+    mutate(runni = runni %% 10) #%>%
+# group_split(runni)
+#
+
+saveRDS(splitted, file = "data/splitted.rds")
+
+# rstudioapi::jobRunScript("controller.R")
+
+get_new(splitted, reconnect = F)
+
+# # debugonce(ad_library_about)
+# page_id_dat %>%
+#   # slice(140001:n()) %>%
+#   filter(!(page_id %in% about_dat$page_id)) %>%
+#   filter(!(page_id %in% already_there)) %>%
+#   filter(!(page_id %in% deleted_pages$page_id)) %>%
+#   # slice(1:5000) %>%
+#   # slice(5000:10000) %>%
+#   # slice(10000:15000) %>%
+#   # slice(15000:20000) %>%
+#   # slice(20000:25000) %>%
+#   # slice(25000:30000) %>%
+#   # slice(35000:n()) %>%
+#   # sample_n(n()) %>%
+#   mutate(runni = 1:n()) %>%
+#   mutate(runni = runni %% 10) %>% #count(runni) %>%
+#   # group_split(runni) %>%
+#   get_new(reconnect = F)
+# walk(~{
+# # batch_name <<- batch_name+1
+# get_new(.x)
+# sav
+# })
+
+stop("hi")
+
+library(tidyverse)
+readRDS_pos <- possibly(readRDS, otherwise = NULL)
+about_dat <- dir("data/abouts", full.names = T) %>%
+    tibble(datpath = .) %>%
+    # filter(magrittr::is_in(str_remove_all(datpath, "data/abouts/|\\.rds"), al_strings)) %>%
+    pull(datpath) %>%
+    map_dfr_progress(readRDS_pos) %>%
+    distinct()
+
+
+saveRDS(about_dat, file = "data/about_dat.rds")
+
+about_dat %>%
+    mutate(chr_length = str_count(about_text)) %>%
+    arrange(desc(chr_length)) %>%
+    count(about_text, sort = T)
+
+# get_new()
+
+# library(tidyverse)
+while (T) {
+    cat(paste0("\r",length(dir("data/abouts", full.names = T))))
+    flush.console()
+}
+#
+# %>%
+#   walk(browseURL)
+
+ad_library_about("https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&view_all_page_id=7860876103&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all")
+
+
+str_detect("SNK", "^(?!.*Hostivice město).*\bSNK\b.*")

@@ -65,3 +65,23 @@ last7 <- get_targeting("121264564551002", timeframe = "LAST_7_DAYS")
 
 head(last7, 5)
 ```
+
+
+## Get Images and Videos
+
+The following code downloads the images and videos of a Meta ad. It also retrieves additional info not present in the Meta Ad Library API (e.g. `page_like_count` `cta_type` i.e. call to action button). Just put in the right Ad Archive ID.
+
+It automatically handles duplicate images and videos (of which there are many) by hashing the images and videos and making sure they are not saved twice.
+
+This piece of code was created in collaboration with [Philipp Mendoza](https://www.uva.nl/en/profile/m/e/p.m.mendoza/p.m.mendoza.html).
+
+
+
+```{r}
+
+get_ad_snapshots("561403598962843", download = T, hashing = T, mediadir = "data/media")
+
+```
+
+
+
