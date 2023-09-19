@@ -15,7 +15,7 @@ The goal of `metatargetr` is to parse targeting information from the
 dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/)
 as well as retrieve data from the [Audience
 tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data%5Bdirection%5D=desc&sort_data%5Bmode%5D=relevancy_monthly_grouped&search_type=page&media_type=all)
-in the Meta Ad Library.
+in the Meta Ad Library. It also includes some helper functions to work with Meta ad library data in general.
 
 ## Installation
 

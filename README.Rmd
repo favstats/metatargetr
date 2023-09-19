@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/metatargetr)](https://CRAN.R-project.org/package=metatargetr)
 <!-- badges: end -->
 
-The goal of `metatargetr` is to parse targeting information from the [Meta Ad Targeting dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/) as well as retrieve data from the [Audience tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all) in the Meta Ad Library.
+The goal of `metatargetr` is to parse targeting information from the [Meta Ad Targeting dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/) as well as retrieve data from the [Audience tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all) in the Meta Ad Library. It also includes some helper functions to work with Meta ad library data in general.
 
 ## Installation
 
