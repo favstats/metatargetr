@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/metatargetr)](https://CRAN.R-project.org/package=metatargetr)
 <!-- badges: end -->
 
-The goal of `metatargetr` is to parse targeting information from the [Meta Ad Targeting dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/) as well as retrieve data from the [Audience tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all) in the Meta Ad Library. It also includes some helper functions to work with Meta ad library data in general.
+The goal of `metatargetr` is to parse targeting information from the [Meta Ad Targeting dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/) as well as retrieve data from the [Audience tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all) in the Meta Ad Library. It also includes some helper functions to work with Meta ad library data in general. Finally, it has also been enhanced with some data to interact with the Google Transparency Report.
 
 ## Installation
 
@@ -82,6 +82,42 @@ Note: You will need the [OpenImageR](https://github.com/mlampros/OpenImageR) R p
 
 get_ad_snapshots("561403598962843", download = T, hashing = T, mediadir = "data/media")
 
+```
+## Google Transparency Report
+
+`ggl_get_spending` is a function in R that queries the Google Ad Library to retrieve information about advertising spending for a specified advertiser. It supports a range of countries and can provide either aggregated data or time-based spending data.
+
+To use `ggl_get_spending`, you need the advertiser's unique identifier, the desired date range, and the country code. The function also has an option to retrieve time-based spending data.
+
+### Retrieve Aggregated Spending Data
+
+Retrieve aggregated spending data for a specific advertiser in the Netherlands. It returns details like currency, number of ads, ad type breakdown, advertiser details, and other metrics.
+ 
+```{r}
+
+ggl_get_spending(advertiser_id = "AR18177962546424709121", 
+                 start_date = "2023-10-24", 
+                 end_date = "2023-11-22",
+                 cntry = "NL")
+```
+### Retrieve Time-Based Spending Data
+
+Retrieve time-based spending data for the same advertiser and country. If `get_times` is set to `TRUE`, it returns a tibble with date-wise spending data.
+
+
+```{r}
+# Retrieve time-based spending data for the same advertiser and country
+timeseries_dat <- ggl_get_spending(advertiser_id = "AR18177962546424709121", 
+                                   start_date = "2023-10-24", 
+                                   end_date = "2023-11-22", 
+                                   cntry = "NL", 
+                                   get_times = T)
+
+# Plotting the time-series data
+timeseries_dat %>% 
+    ggplot2::ggplot(ggplot2::aes(date, spend)) +
+    ggplot2::geom_col() +
+    ggplot2::theme_minimal()
 ```
 
 

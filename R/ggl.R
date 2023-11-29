@@ -37,6 +37,15 @@ ggl_get_spending <- function(advertiser_id,
                              cntry = "NL",
                              get_times = F) {
 
+    if(lubridate::is.Date(start_date)|is.character(start_date)){
+        start_date <- lubridate::ymd(start_date) %>% stringr::str_remove_all("-") %>% as.numeric()
+    }
+    if(lubridate::is.Date(end_date)|is.character(end_date)){
+        end_date <- lubridate::ymd(end_date) %>% stringr::str_remove_all("-") %>% as.numeric() %>% magrittr::subtract(1)
+    } else if(is.numeric(end_date)){
+        end_date <- end_date - 1
+    }
+
     # statsType <- 2
     # advertiser_id = "AR10605432864201768961"
     cntry_dict <- c(NL = "2528", DE = "2276",
@@ -80,8 +89,11 @@ ggl_get_spending <- function(advertiser_id,
 
 
     # Construct the body
-    body <- sprintf('f.req={"1":{"1":"%s","6":%d,"7":%d,"8":%s},"3":{"1":%d}}',
-                    advertiser_id, start_date, end_date, jsonlite::toJSON(cntry), 2)
+    body <- paste0('f.req={"1":{"1":"', advertiser_id,
+                   '","6":', start_date,
+                   ',"7":', end_date,
+                   ',"8":', jsonlite::toJSON(cntry),
+                   '},"3":{"1":2}}')
 
     # Make the POST request
     response <- httr::POST(url, httr::add_headers(.headers = headers), body = body, encode = "form")
