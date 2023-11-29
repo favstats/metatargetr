@@ -41,9 +41,9 @@ ggl_get_spending <- function(advertiser_id,
         start_date <- lubridate::ymd(start_date) %>% stringr::str_remove_all("-") %>% as.numeric()
     }
     if(lubridate::is.Date(end_date)|is.character(end_date)){
-        end_date <- lubridate::ymd(end_date) %>% stringr::str_remove_all("-") %>% as.numeric() %>% magrittr::subtract(1)
+        end_date <- lubridate::ymd(end_date) %>% stringr::str_remove_all("-") %>% as.numeric() %>% magrittr::add(1)
     } else if(is.numeric(end_date)){
-        end_date <- end_date - 1
+        end_date <- end_date + 1
     }
 
     # statsType <- 2
