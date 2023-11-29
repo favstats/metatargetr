@@ -31,12 +31,6 @@
 #'                                     start_date = 20231029, end_date = 20231128,
 #'                                     cntry = "NL", get_times = TRUE)
 #'
-#' @importFrom jsonlite toJSON
-#' @importFrom httr POST
-#' @importFrom dplyr bind_cols, mutate
-#' @importFrom purrr map, map_dfc, map_dfr
-#' @importFrom tibble as_tibble, tibble
-#' @importFrom lubridate ymd
 #' @export
 ggl_get_spending <- function(advertiser_id,
                              start_date = 20231029, end_date = 20231128,
@@ -87,7 +81,7 @@ ggl_get_spending <- function(advertiser_id,
 
     # Construct the body
     body <- sprintf('f.req={"1":{"1":"%s","6":%d,"7":%d,"8":%s},"3":{"1":%d}}',
-                    advertiser_id, start_date, end_date, toJSON(cntry), 2)
+                    advertiser_id, start_date, end_date, jsonlite::toJSON(cntry), 2)
 
     # Make the POST request
     response <- httr::POST(url, httr::add_headers(.headers = headers), body = body, encode = "form")
@@ -160,9 +154,9 @@ ggl_get_spending <- function(advertiser_id,
     }
 
 }
-
-# ggl_get_spending(advertiser_id = "AR10605432864201768961", get_times = F) %>%
+# library(tidyverse)
+# ggl_get_spending(advertiser_id = "AR18091944865565769729", get_times = T) %>%
 #     ggplot(aes(date, spend)) +
 #     geom_line()
 #
-# ggl_get_spending(advertiser_id = "AR10605432864201768961", get_times = F)
+# ggl_get_spending(advertiser_id = "AR18091944865565769729", get_times = F)
