@@ -321,8 +321,11 @@ safe_copy <- function(yoooyyy, whereto) {
 check_hash <- function(.x, hash_table, mediadir){
     if (stringr::str_detect(.x, "mp4")) {
         # print("video")
-        hashy <- av::av_video_info(.x) %>%
-            digest::digest(algo = "md5")
+        hashy <- digest::digest(
+            object = .x,
+            file = T,
+            algo = "md5",
+        )
         type <- "vid"
         ending <- "mp4"
     } else if (stringr::str_detect(.x, "jpg")) {
@@ -340,13 +343,11 @@ check_hash <- function(.x, hash_table, mediadir){
             ending <- "jpg"
         }
 
-        # print(img_to_read_in)
-        # print(ending)
-
-        the_image <- OpenImageR::readImage(img_to_read_in)
-
-        hashy <- the_image %>%
-            digest::digest(algo = "md5")
+        hashy <- digest::digest(
+            object = img_to_read_in,
+            file = T,
+            algo = "md5",
+        )
 
         type <- "img"
     }
