@@ -95,10 +95,6 @@ saved twice.
 This piece of code was created in collaboration with [Philipp
 Mendoza](https://www.uva.nl/en/profile/m/e/p.m.mendoza/p.m.mendoza.html).
 
-Note: You will need the
-[OpenImageR](https://github.com/mlampros/OpenImageR) R package for
-hashing to run!
-
 ``` r
 
 get_ad_snapshots("561403598962843", download = T, hashing = T, mediadir = "data/media")
