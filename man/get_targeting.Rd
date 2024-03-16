@@ -4,12 +4,14 @@
 \alias{get_targeting}
 \title{Get Meta Ad Library targeting data for a page}
 \usage{
-get_targeting(id, timeframe = "LAST_30_DAYS")
+get_targeting(id, timeframe = "LAST_30_DAYS", lang = "en-GB")
 }
 \arguments{
 \item{id}{A character string representing the Facebook page ID.}
 
 \item{timeframe}{A character string representing the desired timeframe. Can either be "LAST_30_DAYS" or "LAST_7_DAYS". Defaults to "LAST_30_DAYS".}
+
+\item{lang}{An ISO language code character string representing the desired language of the targeting criteria. Defaults to "en-GB" but can be "en-US" and many more.}
 }
 \value{
 A \code{tibble} containing the audience data for the specified Facebook page and timeframe.
