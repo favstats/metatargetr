@@ -132,7 +132,7 @@ if( "page_info" %in% include_info) {
   if(!is.null(sdis_raw)){
       sdis <-    sdis_raw %>%
     dplyr::mutate_all(as.character) %>%
-    dplyr::mutate(shared_disclaimer_page_id = my_dataframe$page_id[1]) %>%
+    dplyr::mutate(shared_disclaimer_page_id = pageid[1]) %>%
     jsonlite::toJSON() %>%
     as.character() 
   } else {
@@ -181,7 +181,7 @@ if("targeting_info" %in% include_info ) {
       .x %>% dplyr::mutate(type = .y %>% stringr::str_remove("ad_library_page_targeting_"))
     }) %>%
     dplyr::bind_cols(summary_dat) %>%
-    dplyr::mutate(page_id = my_dataframe$page_id)
+    dplyr::mutate(page_id = pageid)
   
   
 }
