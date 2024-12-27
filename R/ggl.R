@@ -166,6 +166,7 @@ ggl_get_spending <- function(advertiser_id,
     }
 
 }
+
 # library(tidyverse)
 # ggl_get_spending(advertiser_id = "AR18091944865565769729", get_times = T) %>%
 #     ggplot(aes(date, spend)) +

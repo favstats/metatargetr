@@ -4,7 +4,7 @@
 \alias{get_targeting}
 \title{Get Meta Ad Library targeting data for a page}
 \usage{
-get_targeting(id, timeframe = "LAST_30_DAYS", lang = "en-GB")
+get_targeting(id, timeframe = "LAST_30_DAYS", lang = "en-GB", legacy = FALSE)
 }
 \arguments{
 \item{id}{A character string representing the Facebook page ID.}

@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-lightblue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
 [![CRAN status](https://www.r-pkg.org/badges/version/metatargetr)](https://CRAN.R-project.org/package=metatargetr)
 <!-- badges: end -->
 
@@ -41,7 +41,7 @@ remotes::install_github("favstats/metatargetr")
 library(metatargetr)
 ```
 
-## Get Targeting criteria (Last 30 Days)
+## Get Targeting Criteria (Last 30 Days)
 
 The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 30 days. Just put in the right Page ID.
 
@@ -53,7 +53,7 @@ head(last30, 5)
 
 ```
 
-## Get Targeting criteria (Last 7 Days)
+## Get Targeting Criteria (Last 7 Days)
 
 The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 7 days. Just put in the right Page ID.
 
@@ -64,6 +64,55 @@ last7 <- get_targeting("121264564551002", timeframe = "LAST_7_DAYS")
 
 
 head(last7, 5)
+```
+
+## Retrieve *Historical* Targeting Data from Database
+
+Unfortunately, using `get_targeting` **you can only get the targeting criteria in the last 7, 30, and 90 days windows**. However, I have set up scrapers that retrieve the daily targeting data for every single page in the world that runs advertisements in order to archive this data. You can use the function below to retrieve this data. 
+
+> Be aware: sometimes the scrapers do not work so it is possible that data is missing sometimes.
+
+```{r}
+# # set some parameters
+the_cntry <- "DE"
+tf <- 30
+ds <- "2024-10-25"
+
+# # Call the function
+latest_data <- get_targeting_db(the_cntry, tf, ds)
+
+# # Inspect the data
+head(latest_data)
+```
+
+## Retrieve *Historical* Report Data from the Database
+
+Using `get_report_db`, you can retrieve archived advertising reports for specific pages, countries, and timeframes. Reports are stored in a repository and can be downloaded and read directly into R.
+
+>	Note: While we strive to keep the archive complete, occasional scraper failures may lead to missing data for certain days.
+
+```{r}
+# # set some parameters
+the_cntry <- "DE"
+tf <- 30
+ds <- "2024-10-25"
+
+# # Call the function
+latest_data <- get_report_db(the_cntry, tf, ds)
+
+# # Inspect the data
+head(latest_data)
+```
+
+## Get Page Info
+
+You can also retrieve some page info of the page that you are interested in.
+
+```{r}
+page_info <- get_page_insights("121264564551002", include_info = "page_info")
+
+
+str(page_info)
 ```
 
 
@@ -80,9 +129,10 @@ This piece of code was created in collaboration with [Philipp Mendoza](https://w
 get_ad_snapshots("561403598962843", download = T, hashing = T, mediadir = "data/media")
 
 ```
+
 ## Google Transparency Report
 
-`ggl_get_spending` is a function in R that queries the Google Ad Library to retrieve information about advertising spending for a specified advertiser. It supports a range of countries and can provide either aggregated data or time-based spending data.
+`ggl_get_spending` is a function in R that queries the Google Transparency Report to retrieve information about advertising spending for a specified advertiser. It supports a range of countries and can provide either aggregated data or time-based spending data.
 
 To use `ggl_get_spending`, you need the advertiser's unique identifier, the desired date range, and the country code. The function also has an option to retrieve time-based spending data.
 
@@ -92,11 +142,12 @@ Retrieve aggregated spending data for a specific advertiser in the Netherlands. 
  
 ```{r}
 
-ggl_get_spending(advertiser_id = "AR18177962546424709121", 
+ggl_get_spending(advertiser_id = "AR18091944865565769729", 
                  start_date = "2023-10-24", 
                  end_date = "2023-11-22",
                  cntry = "NL")
 ```
+
 ### Retrieve Time-Based Spending Data
 
 Retrieve time-based spending data for the same advertiser and country. If `get_times` is set to `TRUE`, it returns a tibble with date-wise spending data.
@@ -104,7 +155,7 @@ Retrieve time-based spending data for the same advertiser and country. If `get_t
 
 ```{r}
 # Retrieve time-based spending data for the same advertiser and country
-timeseries_dat <- ggl_get_spending(advertiser_id = "AR18177962546424709121", 
+timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729", 
                                    start_date = "2023-10-24", 
                                    end_date = "2023-11-22", 
                                    cntry = "NL", 

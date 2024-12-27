@@ -43,7 +43,7 @@ Retrieves insights for a given Facebook page within a specified timeframe, langu
 It allows for fetching specific types of information and optionally joining page info with targeting info.
 }
 \examples{
-insights <- get_page_insights(pageid="123456789", timeframe="LAST_30_DAYS", lang="en-GB", iso2c="US", 
+insights <- get_page_insights(pageid="123456789", timeframe="LAST_30_DAYS", lang="en-GB", iso2c="US",
                               include_info=c("page_info", "targeting_info"), join_info=TRUE)
 
 }
