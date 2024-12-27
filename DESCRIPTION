@@ -23,7 +23,8 @@ Imports:
     httr,
     rvest,
     readr,
-    tidyr
+    tidyr,
+    httr2
 Suggests:
     OpenImageR,
     testthat (>= 3.0.0),
