@@ -1,0 +1,10 @@
+pandoc: 3.1.11
+pkgdown: 2.1.1
+pkgdown_sha: ~
+articles:
+  google-transparency-report: google-transparency-report.html
+  introduction: introduction.html
+  retrieve-historical-data: retrieve-historical-data.html
+  retrieve-targeting-metadata: retrieve-targeting-metadata.html
+  retrieving-targeting-data: retrieving-targeting-data.html
+last_built: 2024-12-27T12:34Z
