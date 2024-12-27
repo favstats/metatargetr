@@ -24,7 +24,8 @@ Imports:
     rvest,
     readr,
     tidyr,
-    httr2
+    httr2,
+    quarto
 Suggests:
     OpenImageR,
     testthat (>= 3.0.0),
