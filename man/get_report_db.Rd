@@ -14,12 +14,8 @@ get_report_db(the_cntry, timeframe, ds, verbose = FALSE)
 \item{ds}{Character. A timestamp or identifier used to construct the file name (e.g., "2024-12-25").}
 
 \item{verbose}{Logical. Whether to print messages about the process. Default is \code{FALSE}.}
-
-\item{file_name}{Character. The name of the RDS file to download (e.g., "report_2024-12-25.rds").}
 }
 \value{
-A data frame or object read from the RDS file.
-
 A data frame or object read from the RDS file.
 }
 \description{
@@ -28,20 +24,6 @@ from a GitHub repository hosting RDS files. The file is downloaded
 to a temporary location, read into R, and then deleted.
 }
 \examples{
-# Example usage
-report_data <- get_report_db(
-  the_cntry = "DE",
-  timeframe = "-last_30_days",
-  file_name = "report_2024-12-25.rds",
-  verbose = TRUE
-)
-print(head(report_data))
-Retrieve Report Data from GitHub Repository
-
-This function retrieves a report for a specific country and timeframe
-from a GitHub repository hosting RDS files. The file is downloaded
-to a temporary location, read into R, and then deleted.
-
 # Example usage
 report_data <- get_report_db(
   the_cntry = "DE",

@@ -182,15 +182,61 @@ str(page_info)
 #>  $ page_verification     : chr "BLUE_VERIFIED"
 #>  $ entity_type           : chr "PERSON_PROFILE"
 #>  $ page_alias            : chr "VVD"
-#>  $ likes                 : chr "108141"
+#>  $ likes                 : chr "108142"
 #>  $ page_category         : chr "Political party"
 #>  $ ig_verification       : chr "TRUE"
 #>  $ ig_username           : chr "vvd"
-#>  $ ig_followers          : chr "42144"
+#>  $ ig_followers          : chr "42145"
 #>  $ shared_disclaimer_info: chr "[]"
 #>  $ about                 : chr "Doe mee en word lid van de VVD! 💙🧡 "
 #>  $ event                 : chr "CREATION: 2010-04-23 21:05:02"
 #>  $ no_address            : logi TRUE
+```
+
+## `retrieve_targeting_metadata()`
+
+The `retrieve_targeting_metadata` function is designed to retrieve
+metadata about targeting data releases from a GitHub repository to see
+which data is present (or not). It extracts and organizes information
+such as file names, sizes, timestamps, and tags for a specified country
+and timeframe. **This metadata provides an overview of the available
+targeting data without downloading the actual files.**
+
+- `country_code` (*Character*):  
+  The ISO country code (e.g., `"DE"` for Germany, `"US"` for the United
+  States).
+
+- `timeframe` (*Character*):  
+  The timeframe for the targeting data. Acceptable values are:
+
+  - `"7"`: Last 7 days.
+  - `"30"`: Last 30 days.
+  - `"90"`: Last 90 days.
+
+- `base_url` (*Character*, default:
+  `"https://github.com/favstats/meta_ad_targeting/releases/expanded_assets/"`):  
+  The base URL for the GitHub repository hosting the targeting data.
+
+``` r
+
+# Retrieve metadata for Germany for the last 30 days
+metadata <- retrieve_targeting_metadata("DE", "30")
+
+print(metadata)
+#> # A tibble: 313 × 3
+#>    cntry ds         tframe      
+#>    <chr> <chr>      <chr>       
+#>  1 DE    2024-12-25 last_30_days
+#>  2 DE    2024-12-24 last_30_days
+#>  3 DE    2024-12-23 last_30_days
+#>  4 DE    2024-12-22 last_30_days
+#>  5 DE    2024-12-21 last_30_days
+#>  6 DE    2024-12-20 last_30_days
+#>  7 DE    2024-12-19 last_30_days
+#>  8 DE    2024-12-18 last_30_days
+#>  9 DE    2024-12-17 last_30_days
+#> 10 DE    2024-12-16 last_30_days
+#> # ℹ 303 more rows
 ```
 
 ## Get Images and Videos
@@ -276,4 +322,4 @@ timeseries_dat %>%
     ggplot2::theme_minimal()
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />

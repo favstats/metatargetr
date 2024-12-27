@@ -1,0 +1,47 @@
+template:
+  bootstrap: 5
+  bootswatch: yeti  # A modern theme with clean design
+  bslib:
+    bg: "#ffffff"      # Page background color
+    fg: "#000000"      # Default text color
+    primary: "#007bff" # Modern blue color for links and accents
+    base_font: {google: "Roboto"}
+    heading_font: {google: "Roboto Slab"}
+    code_font: {google: "JetBrains Mono"}
+  light-switch: true   # Enable light/dark mode switching
+
+navbar:
+  bg: "#007bff"        # Modern blue background color
+  type: dark          # Black text for a light-themed navbar
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github, lightswitch]
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/favstats/metatargetr
+      aria-label: GitHub
+
+articles:
+  - title: "Get Started"
+    contents:
+      - introduction
+  - title: "Working with Targeting Data"
+    contents:
+      - retrieving-targeting-data
+      - retrieve-historical-data
+      - retrieve-targeting-metadata
+  - title: "Google Transparency Integration"
+    contents:
+      - google-transparency-report
+
+news:
+  one_page: true
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with
+  components:
+    developed_by: "Developed by Fabio Votta and Philipp Mendoza."
+    built_with: "Built with ❤️ and pkgdown."

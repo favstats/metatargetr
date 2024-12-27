@@ -53,9 +53,6 @@ if("page_info" %in% include_info ){
 ua <- sample(ua_list, 1)
 # print(ua)
 
-# pageid <- "7860876103"
-# timeframe <- "90"
-
 # Define static parameters
 static_params <- list(
   av = "0",                        # Likely application version; may not change often. Optional.
@@ -64,20 +61,8 @@ static_params <- list(
   a = "1",                         # Arbitrary request parameter; purpose unclear but likely required.
   req = "3",                       # Request parameter; often a sequence or batch request identifier. Likely required.
   hs = "19797.BP%3ADEFAULT.2.0..0.0", # Host session or configuration metadata; required for server-side routing.
-  # dpr = "1",                       # Device Pixel Ratio; reflects screen resolution. Optional but often included.
   ccg = "EXCELLENT",               # Connection grade; describes network quality. Optional but useful for server-side optimizations.
-  # rev = "1012093869",              # Revision/version number; likely application or API version. Required.
-  # s = "sbbnic%3Awquopy%3A7r1j3c",  # Session token or tracking identifier; unique to the visitor. Required.
-  # hsi = "7346737420686302672",     # Hashed Session ID; unique to the visitor. Required.
-  # dyn = "7xe6Eiw_K9zo5ObwKBAgc9o2exu13wqojyUW3qi4EoxW4E7SewXwCwfW7oqx60Vo1upEK12wvk1bwbG78b87C2m3K2y11wBw5Zx62G3i1ywdl0Fw4Hwp8kwyx2cU8EmwoHwrUcUjwVw9O7bK2S2W2K4EG1Mxu16wciaw4JwJwSyES0gq0K-1LwqobU2cwmo6O1Fw44wt8",
-  # Dynamic parameters encoded in a proprietary format; likely unique to each request. Required.
-
   csr = "",                        # CSRF token; placeholder here, likely required in some contexts.
-  # lsd = "AVo6-wl7l1Q",             # Login session data; required for session validation.
-  # jazoest = "2881",                # CSRF-related field; required for security checks.
-  # spin_r = "1012093869",           # Spin-related metadata (server-specific session management). Required.
-  # spin_b = "trunk",                # Backend branch/version. Required for routing to the correct API version.
-  # spin_t = "1710545602",           # Server timestamp. Required for ensuring request freshness.
   `_jssesw` = "1",                 # Encoded session value. Required for session management.
   fb_api_caller_class = "RelayModern", # API metadata describing the client. Required.
   fb_api_req_friendly_name = "AdLibraryMobileFocusedStateProviderQuery", # API-friendly name for request logging. Optional.
@@ -97,9 +82,6 @@ variables <- jsonlite::toJSON(
     active_status = "ALL",                  # Filter for active/inactive ads. Required.
     ad_type = "POLITICAL_AND_ISSUE_ADS",    # Type of ads (repeated for clarity). Required.
     bylines = list(),                       # List of bylines to filter ads. Optional.
-    # collation_token = "7ca3912f-0148-43ce-83e4-9a68ef656e4d",
-    # Unique token for grouping or collation; may be session-based. Likely required.
-
     content_languages = list(),             # Filter for content languages. Optional.
     count = 30,                             # Number of results to fetch. Optional but usually required for pagination.
     countries = list(iso2c),                # List of countries for filtering (repeated for clarity). Required.
@@ -107,9 +89,6 @@ variables <- jsonlite::toJSON(
     full_text_search_field = "ALL",         # Full-text search field filter. Optional.
     group_by_modes = list(),                # Grouping modes for results. Optional.
     search_type = "PAGE",                   # Type of search (e.g., by page). Required.
-    # session_id = "1678877b-700b-485a-abb0-60efcb6b4019",
-    # Unique session identifier for the query. Required for tracking.
-
     sort_data = list(
       mode = "SORT_BY_RELEVANCY_MONTHLY_GROUPED", # Sorting mode. Required.
       direction = "ASCENDING"                    # Sorting direction. Required.

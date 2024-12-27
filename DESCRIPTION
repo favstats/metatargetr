@@ -28,5 +28,5 @@ Suggests:
     OpenImageR,
     testthat (>= 3.0.0),
     arrow
-URL: https://github.com/favstats/metatargetr
+URL: https://github.com/favstats/metatargetr, https://favstats.github.io/metatargetr/
 BugReports: https://github.com/favstats/metatargetr/issues

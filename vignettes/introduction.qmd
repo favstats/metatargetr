@@ -1,0 +1,47 @@
+---
+title: "Introduction to metatargetr"
+description: > 
+  Get started with metatargetr, learn about its core functionality and basic usage.
+vignette: >
+  %\VignetteIndexEntry{Introduction to metatargetr}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: '#>'
+---
+
+## Overview
+
+metatargetr is an R package designed to parse and analyze targeting information from the Meta Ad Library dataset and retrieve data from the Audience tab. It provides tools for working with Meta ad library data and includes integration with the Google Transparency Report.
+
+## Installation
+
+You can install the development version of metatargetr from GitHub:
+
+```{r}
+#| eval: false
+# install.packages("remotes")
+remotes::install_github("favstats/metatargetr")
+```
+
+## Basic Usage
+
+First, load the package:
+
+```{r}
+#| warning: false
+#| message: false
+library(metatargetr)
+```
+
+The package provides several core functions:
+
+1. `get_targeting()`: Retrieve recent targeting data
+2. `get_targeting_db()`: Access historical targeting data
+3. `get_page_insights()`: Get page information
+4. `get_ad_snapshots()`: Download ad creatives
+5. `ggl_get_spending()`: Access Google Transparency Report data
+
+Each of these functions is documented in detail in the following sections.

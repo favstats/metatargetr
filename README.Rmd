@@ -115,6 +115,32 @@ page_info <- get_page_insights("121264564551002", include_info = "page_info")
 str(page_info)
 ```
 
+## `retrieve_targeting_metadata()`
+
+The `retrieve_targeting_metadata` function is designed to retrieve metadata about targeting data releases from a GitHub repository to see which data is present (or not). It extracts and organizes information such as file names, sizes, timestamps, and tags for a specified country and timeframe. **This metadata provides an overview of the available targeting data without downloading the actual files.**
+
+- `country_code` (*Character*):  
+  The ISO country code (e.g., `"DE"` for Germany, `"US"` for the United States).  
+
+- `timeframe` (*Character*):  
+  The timeframe for the targeting data. Acceptable values are:
+  - `"7"`: Last 7 days.
+  - `"30"`: Last 30 days.
+  - `"90"`: Last 90 days.
+
+- `base_url` (*Character*, default: `"https://github.com/favstats/meta_ad_targeting/releases/expanded_assets/"`):  
+  The base URL for the GitHub repository hosting the targeting data.
+
+
+```{r}
+
+# Retrieve metadata for Germany for the last 30 days
+metadata <- retrieve_targeting_metadata("DE", "30")
+
+print(metadata)
+
+```
+
 
 ## Get Images and Videos
 
