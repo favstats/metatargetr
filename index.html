@@ -14,8 +14,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Retrieve and Parse Meta Ad Targeting Data">
-<meta name="description" content="What the package does (one paragraph).">
-<meta property="og:description" content="What the package does (one paragraph).">
+<meta name="description" content="The metatargetr package provides tools for retrieving, parsing, and analyzing advertising targeting data from Meta’s Ad Library and Audience Tab.">
+<meta property="og:description" content="The metatargetr package provides tools for retrieving, parsing, and analyzing advertising targeting data from Meta’s Ad Library and Audience Tab.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -63,7 +63,52 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-<p>The goal of <code>metatargetr</code> is to parse targeting information from the <a href="https://developers.facebook.com/docs/fort-ads-targeting-dataset/" class="external-link">Meta Ad Targeting dataset</a> as well as retrieve data from the <a href="https://www.facebook.com/ads/library/?active_status=all&amp;ad_type=political_and_issue_ads&amp;country=NL&amp;view_all_page_id=175740570505&amp;sort_data%5Bdirection%5D=desc&amp;sort_data%5Bmode%5D=relevancy_monthly_grouped&amp;search_type=page&amp;media_type=all" class="external-link">Audience tab</a> in the Meta Ad Library. It also includes some helper functions to work with Meta ad library data in general. Finally, it has also been enhanced with some data to interact with the Google Transparency Report.</p>
+<p>The goal of <code>metatargetr</code> is to parse targeting information from the <a href="https://developers.facebook.com/docs/fort-ads-targeting-dataset/" class="external-link">Meta Ad Targeting dataset</a> and retrieve data from the <a href="https://www.facebook.com/ads/library/?active_status=all&amp;ad_type=political_and_issue_ads&amp;country=NL&amp;view_all_page_id=175740570505&amp;sort_data%5Bdirection%5D=desc&amp;sort_data%5Bmode%5D=relevancy_monthly_grouped&amp;search_type=page&amp;media_type=all" class="external-link">Audience tab</a> in the Meta Ad Library. It also includes helper functions for Meta ad library data and integrates data from the Google Transparency Report.</p>
+<p>💡 <em>Support Open-Source Development</em></p>
+<p>If <code>metatargetr</code> has been helpful to you, consider <a href="https://www.buymeacoffee.com/favstats" class="external-link">supporting the project</a>! Every contribution keeps the maintenance work going and helps me develop new features 😊</p>
+<div style="text-align: right;">
+<p><a href="https://www.buymeacoffee.com/favstats" target="_blank" class="external-link"> <img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&amp;emoji=&amp;slug=favstats&amp;button_colour=FFDD00&amp;font_colour=000000&amp;font_family=Arial&amp;outline_colour=000000&amp;coffee_colour=ffffff" alt="Buy Me a Coffee" style="height: 40px; width: auto;"></a></p>
+</div>
+<hr>
+<div class="section level2">
+<h2 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
+</h2>
+<ul>
+<li>🚀 <a href="#installation">Installation</a><br>
+</li>
+<li>📦 <a href="#load-in-package">Load in Package</a><br>
+</li>
+<li>🎯 <a href="#get-targeting-criteria">Get Targeting Criteria</a>
+<ul>
+<li>⏳ <a href="#get-targeting-criteria-last-30-days">Last 30 Days</a><br>
+</li>
+<li>🗓️ <a href="#get-targeting-criteria-last-7-days">Last 7 Days</a><br>
+</li>
+</ul>
+</li>
+<li>🕰️ <a href="#retrieve-historical-targeting-data-from-database">Retrieve Historical Targeting Data</a><br>
+</li>
+<li>🗂️ <a href="#retrieve-historical-report-data-from-the-database">Retrieve Historical Report Data</a><br>
+</li>
+<li>ℹ️ <a href="#get-page-info">Get Page Info</a><br>
+</li>
+<li>🔍 <a href="#retrieve-targeting-metadata">Retrieve Targeting Metadata</a><br>
+</li>
+<li>🖼️ <a href="#get-images-and-videos">Get Images and Videos</a><br>
+</li>
+<li>📊 <a href="#google-transparency-report">Google Transparency Report</a>
+<ul>
+<li>💰 <a href="#retrieve-aggregated-spending-data">Retrieve Aggregated Spending Data</a><br>
+</li>
+<li>📈 <a href="#retrieve-time-based-spending-data">Retrieve Time-Based Spending Data</a><br>
+</li>
+</ul>
+</li>
+<li>✍️ <a href="#citing-metatargetr">Citing metatargetr</a>
+</li>
+</ul>
+<hr>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -80,30 +125,32 @@
 <div class="section level2">
 <h2 id="get-targeting-criteria-last-30-days">Get Targeting Criteria (Last 30 Days)<a class="anchor" aria-label="anchor" href="#get-targeting-criteria-last-30-days"></a>
 </h2>
-<p>The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 30 days. Just put in the right Page ID.</p>
+<p>The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 30 days of available data.</p>
+<p>Just put in the right <em>Page ID</em>. These can be found in the <a href="https://www.facebook.com/ads/library/" class="external-link">Meta Ad Library</a> or the <a href="https://www.facebook.com/ads/library/report/" class="external-link">Meta Ad Library Report</a>. You can also <a href="#retrieve-historical-report-data-from-the-database">retrieve historical report data</a> from the maintained database.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">last30</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_targeting.html">get_targeting</a></span><span class="op">(</span><span class="st">"121264564551002"</span>, timeframe <span class="op">=</span> <span class="st">"LAST_30_DAYS"</span><span class="op">)</span></span>
+<span><span class="va">last30</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_targeting.html">get_targeting</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"121264564551002"</span>, </span>
+<span>                        timeframe <span class="op">=</span> <span class="st">"LAST_30_DAYS"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">last30</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               value num_ads total_spend_pct     type location_type</span></span>
-<span><span class="co">#&gt; 1               All      44      1.00000000   gender          &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2             Women       0      0.00000000   gender          &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3               Men       0      0.00000000   gender          &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4 5334, Netherlands       2      0.03319955 location          zips</span></span>
-<span><span class="co">#&gt; 5 6982, Netherlands       2      0.09145497 location          zips</span></span>
+<span><span class="co">#&gt; 1               All      44       1.0000000   gender          &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2             Women       0       0.0000000   gender          &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3               Men       0       0.0000000   gender          &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4 5931, Netherlands       7       0.1598496 location          zips</span></span>
+<span><span class="co">#&gt; 5 9461, Netherlands       7       0.1598496 location          zips</span></span>
 <span><span class="co">#&gt;   num_obfuscated is_exclusion custom_audience_type         ds main_currency</span></span>
-<span><span class="co">#&gt; 1             NA           NA                 &lt;NA&gt; 2024-12-25           EUR</span></span>
-<span><span class="co">#&gt; 2             NA           NA                 &lt;NA&gt; 2024-12-25           EUR</span></span>
-<span><span class="co">#&gt; 3             NA           NA                 &lt;NA&gt; 2024-12-25           EUR</span></span>
-<span><span class="co">#&gt; 4              0        FALSE                 &lt;NA&gt; 2024-12-25           EUR</span></span>
-<span><span class="co">#&gt; 5              0        FALSE                 &lt;NA&gt; 2024-12-25           EUR</span></span>
+<span><span class="co">#&gt; 1             NA           NA                 &lt;NA&gt; 2024-12-26           EUR</span></span>
+<span><span class="co">#&gt; 2             NA           NA                 &lt;NA&gt; 2024-12-26           EUR</span></span>
+<span><span class="co">#&gt; 3             NA           NA                 &lt;NA&gt; 2024-12-26           EUR</span></span>
+<span><span class="co">#&gt; 4              0        FALSE                 &lt;NA&gt; 2024-12-26           EUR</span></span>
+<span><span class="co">#&gt; 5              0        FALSE                 &lt;NA&gt; 2024-12-26           EUR</span></span>
 <span><span class="co">#&gt;   total_num_ads total_spend_formatted is_30_day_available is_90_day_available</span></span>
-<span><span class="co">#&gt; 1            44                €7,906                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 2            44                €7,906                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 3            44                €7,906                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 4            44                €7,906                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 5            44                €7,906                TRUE                TRUE</span></span>
+<span><span class="co">#&gt; 1            44                €7,606                TRUE                TRUE</span></span>
+<span><span class="co">#&gt; 2            44                €7,606                TRUE                TRUE</span></span>
+<span><span class="co">#&gt; 3            44                €7,606                TRUE                TRUE</span></span>
+<span><span class="co">#&gt; 4            44                €7,606                TRUE                TRUE</span></span>
+<span><span class="co">#&gt; 5            44                €7,606                TRUE                TRUE</span></span>
 <span><span class="co">#&gt;           page_id</span></span>
 <span><span class="co">#&gt; 1 121264564551002</span></span>
 <span><span class="co">#&gt; 2 121264564551002</span></span>
@@ -116,7 +163,8 @@
 </h2>
 <p>The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 7 days. Just put in the right Page ID.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">last7</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_targeting.html">get_targeting</a></span><span class="op">(</span><span class="st">"121264564551002"</span>, timeframe <span class="op">=</span> <span class="st">"LAST_7_DAYS"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">last7</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_targeting.html">get_targeting</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"121264564551002"</span>, </span>
+<span>                       timeframe <span class="op">=</span> <span class="st">"LAST_7_DAYS"</span><span class="op">)</span></span>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">last7</span>, <span class="fl">5</span><span class="op">)</span></span>
@@ -128,9 +176,9 @@
 <div class="section level2">
 <h2 id="retrieve-historical-targeting-data-from-database">Retrieve <em>Historical</em> Targeting Data from Database<a class="anchor" aria-label="anchor" href="#retrieve-historical-targeting-data-from-database"></a>
 </h2>
-<p>Unfortunately, using <code>get_targeting</code> <strong>you can only get the targeting criteria in the last 7, 30, and 90 days windows</strong>. However, I have set up scrapers that retrieve the daily targeting data for every single page in the world that runs advertisements in order to archive this data. You can use the function below to retrieve this data.</p>
+<p>Unfortunately, using <code>get_targeting</code> <strong>you can only get the targeting criteria in the last 7, 30, and 90 days windows</strong>. However, I have set up scrapers that retrieve the daily targeting data for every single page in the world that runs advertisements in order to archive this data. You can use the function below to retrieve it.</p>
 <blockquote>
-<p>Be aware: sometimes the scrapers do not work so it is possible that data is missing sometimes.</p>
+<p>Be aware: sometimes the scrapers do not work so it is possible that some pages are missing. You can use <a href="#retrieve-targeting-metadata"><code>retrieve_targeting_metadata</code></a> function to check which data for which country and day is present.</p>
 </blockquote>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># # set some parameters</span></span>
@@ -211,11 +259,11 @@
 <span><span class="co">#&gt;  $ page_verification     : chr "BLUE_VERIFIED"</span></span>
 <span><span class="co">#&gt;  $ entity_type           : chr "PERSON_PROFILE"</span></span>
 <span><span class="co">#&gt;  $ page_alias            : chr "VVD"</span></span>
-<span><span class="co">#&gt;  $ likes                 : chr "108142"</span></span>
+<span><span class="co">#&gt;  $ likes                 : chr "108137"</span></span>
 <span><span class="co">#&gt;  $ page_category         : chr "Political party"</span></span>
 <span><span class="co">#&gt;  $ ig_verification       : chr "TRUE"</span></span>
 <span><span class="co">#&gt;  $ ig_username           : chr "vvd"</span></span>
-<span><span class="co">#&gt;  $ ig_followers          : chr "42145"</span></span>
+<span><span class="co">#&gt;  $ ig_followers          : chr "42137"</span></span>
 <span><span class="co">#&gt;  $ shared_disclaimer_info: chr "[]"</span></span>
 <span><span class="co">#&gt;  $ about                 : chr "Doe mee en word lid van de VVD! 💙🧡 "</span></span>
 <span><span class="co">#&gt;  $ event                 : chr "CREATION: 2010-04-23 21:05:02"</span></span>
@@ -250,20 +298,20 @@ The base URL for the GitHub repository hosting the targeting data.</p></li>
 <span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/retrieve_targeting_metadata.html">retrieve_targeting_metadata</a></span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"30"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 313 × 3</span></span>
+<span><span class="co">#&gt; # A tibble: 314 × 3</span></span>
 <span><span class="co">#&gt;    cntry ds         tframe      </span></span>
 <span><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       </span></span>
-<span><span class="co">#&gt;  1 DE    2024-12-25 last_30_days</span></span>
-<span><span class="co">#&gt;  2 DE    2024-12-24 last_30_days</span></span>
-<span><span class="co">#&gt;  3 DE    2024-12-23 last_30_days</span></span>
-<span><span class="co">#&gt;  4 DE    2024-12-22 last_30_days</span></span>
-<span><span class="co">#&gt;  5 DE    2024-12-21 last_30_days</span></span>
-<span><span class="co">#&gt;  6 DE    2024-12-20 last_30_days</span></span>
-<span><span class="co">#&gt;  7 DE    2024-12-19 last_30_days</span></span>
-<span><span class="co">#&gt;  8 DE    2024-12-18 last_30_days</span></span>
-<span><span class="co">#&gt;  9 DE    2024-12-17 last_30_days</span></span>
-<span><span class="co">#&gt; 10 DE    2024-12-16 last_30_days</span></span>
-<span><span class="co">#&gt; # ℹ 303 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt;  1 DE    2024-12-26 last_30_days</span></span>
+<span><span class="co">#&gt;  2 DE    2024-12-25 last_30_days</span></span>
+<span><span class="co">#&gt;  3 DE    2024-12-24 last_30_days</span></span>
+<span><span class="co">#&gt;  4 DE    2024-12-23 last_30_days</span></span>
+<span><span class="co">#&gt;  5 DE    2024-12-22 last_30_days</span></span>
+<span><span class="co">#&gt;  6 DE    2024-12-21 last_30_days</span></span>
+<span><span class="co">#&gt;  7 DE    2024-12-20 last_30_days</span></span>
+<span><span class="co">#&gt;  8 DE    2024-12-19 last_30_days</span></span>
+<span><span class="co">#&gt;  9 DE    2024-12-18 last_30_days</span></span>
+<span><span class="co">#&gt; 10 DE    2024-12-17 last_30_days</span></span>
+<span><span class="co">#&gt; # ℹ 304 more rows</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-images-and-videos">Get Images and Videos<a class="anchor" aria-label="anchor" href="#get-images-and-videos"></a>
@@ -302,10 +350,10 @@ The base URL for the GitHub repository hosting the targeting data.</p></li>
 <span>                 end_date <span class="op">=</span> <span class="st">"2023-11-22"</span>,</span>
 <span>                 cntry <span class="op">=</span> <span class="st">"NL"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 1 × 18</span></span>
-<span><span class="co">#&gt;   currency spend number_of_ads vid_ad_perc vid_ad_spend vid_type text_ad_perc</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt;        &lt;dbl&gt;    &lt;int&gt;        &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 EUR      56050 160                 0.681        0.479        1        0.319</span></span>
-<span><span class="co">#&gt; # ℹ 11 more variables: text_ad_spend &lt;dbl&gt;, text_type &lt;int&gt;, metric &lt;int&gt;,</span></span>
+<span><span class="co">#&gt;   currency spend number_of_ads text_ad_perc text_ad_spend text_type vid_ad_perc</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;                &lt;dbl&gt;         &lt;dbl&gt;     &lt;int&gt;       &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 EUR      56050 160                  0.319         0.521         3       0.681</span></span>
+<span><span class="co">#&gt; # ℹ 11 more variables: vid_ad_spend &lt;dbl&gt;, vid_type &lt;int&gt;, metric &lt;int&gt;,</span></span>
 <span><span class="co">#&gt; #   advertiser_id &lt;chr&gt;, advertiser_name &lt;chr&gt;, cntry &lt;chr&gt;, unk1 &lt;int&gt;,</span></span>
 <span><span class="co">#&gt; #   unk2 &lt;int&gt;, unk3 &lt;int&gt;, unk4 &lt;chr&gt;, unk5 &lt;chr&gt;</span></span></code></pre></div>
 </div>
@@ -327,6 +375,41 @@ The base URL for the GitHub repository hosting the targeting data.</p></li>
 <span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">geom_col</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-10-1.png" width="100%"></p>
+<hr>
+</div>
+</div>
+<div class="section level2">
+<h2 id="citing-metatargetr">Citing <code>metatargetr</code>
+<a class="anchor" aria-label="anchor" href="#citing-metatargetr"></a>
+</h2>
+<p>If you use the <code>metatargetr</code> package or data from its database in your research, publications, or other outputs, please ensure you provide proper attribution. This helps recognize the effort and resources required to maintain and provide access to these data.</p>
+<div class="section level3">
+<h3 id="citation-format">Citation Format<a class="anchor" aria-label="anchor" href="#citation-format"></a>
+</h3>
+<blockquote>
+<p>Votta, Fabio, &amp; Mendoza, Philipp. (2024). <code>metatargetr</code>: A package for parsing and analyzing ad library and targeting data. GitHub. Available at: <a href="https://github.com/favstats/metatargetr" class="external-link uri">https://github.com/favstats/metatargetr</a></p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="bibtex-entry">BibTeX Entry<a class="anchor" aria-label="anchor" href="#bibtex-entry"></a>
+</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">votta2024metatargetr</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="dt">author</span> = {Votta, Fabio and Mendoza, Philipp},</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="dt">title</span> = {metatargetr: A package for parsing and analyzing ad library and targeting data},</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="dt">publisher</span> = {GitHub},</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="dt">url</span> = {https://github.com/favstats/metatargetr}</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="additional-notes">Additional Notes<a class="anchor" aria-label="anchor" href="#additional-notes"></a>
+</h3>
+<p>If you use data from the <code>metatargetr</code> database, please include the following acknowledgement in your work:</p>
+<blockquote>
+<p>Data were retrieved from the <code>metatargetr</code> database, maintained by Fabio Votta. The database archives targeting data from the Meta Ad Library and Google Transparency Report. For more information, visit <a href="https://github.com/favstats/metatargetr" class="external-link uri">https://github.com/favstats/metatargetr</a>.</p>
+</blockquote>
+<p>By including these citations and acknowledgements, you help support the continued development of <code>metatargetr</code> and its associated resources. Thank you for your collaboration!</p>
+<hr>
 </div>
 </div>
 </div>
