@@ -103,16 +103,16 @@ body <- paste(names(static_params), static_params, sep = "=", collapse = "&")
 # print("Constructed body:")
 # print(body)
 
-resp <- request("https://www.facebook.com/api/graphql/") %>%
-  req_headers(
+resp <- httr2::request("https://www.facebook.com/api/graphql/") %>%
+  httr2::req_headers(
     `Accept-Language` = paste0(
       lang, ",", stringr::str_split(lang, "-") %>% unlist() %>% .[1], ";q=0.5"
     ),
     `sec-fetch-site` = "same-origin",
     `user-agent` = ua
   ) %>%
-  req_body_raw(body, "application/x-www-form-urlencoded") %>%
-  req_perform()
+  httr2::req_body_raw(body, "application/x-www-form-urlencoded") %>%
+  httr2::req_perform()
 
 out <- resp %>%
   httr2::resp_body_html() %>%
