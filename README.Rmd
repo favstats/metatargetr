@@ -2,6 +2,7 @@
 output: github_document
 ---
 
+
 # metatargetr <img src="man/figures/metatargetr_logo.png" width="160px" align="right"/>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -13,18 +14,47 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
-
-#source("R/get_targeting.R")
 ```
-
-
 
 <!-- badges: start -->
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-lightblue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
 [![CRAN status](https://www.r-pkg.org/badges/version/metatargetr)](https://CRAN.R-project.org/package=metatargetr)
 <!-- badges: end -->
 
-The goal of `metatargetr` is to parse targeting information from the [Meta Ad Targeting dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/) as well as retrieve data from the [Audience tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all) in the Meta Ad Library. It also includes some helper functions to work with Meta ad library data in general. Finally, it has also been enhanced with some data to interact with the Google Transparency Report.
+The goal of `metatargetr` is to parse targeting information from the [Meta Ad Targeting dataset](https://developers.facebook.com/docs/fort-ads-targeting-dataset/) and retrieve data from the [Audience tab](https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=NL&view_all_page_id=175740570505&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=page&media_type=all) in the Meta Ad Library. It also includes helper functions for Meta ad library data and integrates data from the Google Transparency Report.
+
+
+💡 *Support Open-Source Development*
+
+If `metatargetr` has been helpful to you, consider [supporting the project](https://www.buymeacoffee.com/favstats)! Every contribution keeps the maintenance work going and helps me develop new features 😊
+
+```{=html}
+<div style="text-align: right;">
+  <a href="https://www.buymeacoffee.com/favstats" target="_blank">
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=favstats&button_colour=FFDD00&font_colour=000000&font_family=Arial&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me a Coffee" style="height: 40px; width: auto;">
+  </a>
+</div>
+```
+---
+
+## Table of Contents
+
+- 🚀 [Installation](#installation)  
+- 📦 [Load in Package](#load-in-package)  
+- 🎯 [Get Targeting Criteria](#get-targeting-criteria)  
+  - ⏳ [Last 30 Days](#get-targeting-criteria-last-30-days)  
+  - 🗓️ [Last 7 Days](#get-targeting-criteria-last-7-days)  
+- 🕰️ [Retrieve Historical Targeting Data](#retrieve-historical-targeting-data-from-database)  
+- 🗂️ [Retrieve Historical Report Data](#retrieve-historical-report-data-from-the-database)  
+- ℹ️ [Get Page Info](#get-page-info)  
+- 🔍 [Retrieve Targeting Metadata](#retrieve-targeting-metadata)  
+- 🖼️ [Get Images and Videos](#get-images-and-videos)  
+- 📊 [Google Transparency Report](#google-transparency-report)  
+  - 💰 [Retrieve Aggregated Spending Data](#retrieve-aggregated-spending-data)  
+  - 📈 [Retrieve Time-Based Spending Data](#retrieve-time-based-spending-data)  
+- ✍️ [Citing metatargetr](#citing-metatargetr)
+
+---
 
 ## Installation
 
@@ -43,11 +73,14 @@ library(metatargetr)
 
 ## Get Targeting Criteria (Last 30 Days)
 
-The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 30 days. Just put in the right Page ID.
+The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 30 days of available data. 
+
+Just put in the right *Page ID*. These can be found in the [Meta Ad Library](https://www.facebook.com/ads/library/) or the [Meta Ad Library Report](https://www.facebook.com/ads/library/report/). You can also [retrieve historical report data](#retrieve-historical-report-data-from-the-database) from the maintained database.
 
 ```{r}
 
-last30 <- get_targeting("121264564551002", timeframe = "LAST_30_DAYS")
+last30 <- get_targeting(id = "121264564551002", 
+                        timeframe = "LAST_30_DAYS")
 
 head(last30, 5)
 
@@ -57,10 +90,9 @@ head(last30, 5)
 
 The following code retrieves the targeting criteria used by the main page of the VVD (Dutch party) in the last 7 days. Just put in the right Page ID.
 
-
-
 ```{r}
-last7 <- get_targeting("121264564551002", timeframe = "LAST_7_DAYS")
+last7 <- get_targeting(id = "121264564551002", 
+                       timeframe = "LAST_7_DAYS")
 
 
 head(last7, 5)
@@ -68,9 +100,9 @@ head(last7, 5)
 
 ## Retrieve *Historical* Targeting Data from Database
 
-Unfortunately, using `get_targeting` **you can only get the targeting criteria in the last 7, 30, and 90 days windows**. However, I have set up scrapers that retrieve the daily targeting data for every single page in the world that runs advertisements in order to archive this data. You can use the function below to retrieve this data. 
+Unfortunately, using `get_targeting` **you can only get the targeting criteria in the last 7, 30, and 90 days windows**. However, I have set up scrapers that retrieve the daily targeting data for every single page in the world that runs advertisements in order to archive this data. You can use the function below to retrieve it. 
 
-> Be aware: sometimes the scrapers do not work so it is possible that data is missing sometimes.
+> Be aware: sometimes the scrapers do not work so it is possible that some pages are missing. You can use [`retrieve_targeting_metadata`](#retrieve-targeting-metadata) function to check which data for which country and day is present. 
 
 ```{r}
 # # set some parameters
@@ -196,3 +228,35 @@ timeseries_dat %>%
 
 
 
+
+---
+
+## Citing `metatargetr`
+
+If you use the `metatargetr` package or data from its database in your research, publications, or other outputs, please ensure you provide proper attribution. This helps recognize the effort and resources required to maintain and provide access to these data.
+
+### Citation Format
+
+> 	Votta, Fabio, & Mendoza, Philipp. (2024). `metatargetr`: A package for parsing and analyzing ad library and targeting data. GitHub. Available at: https://github.com/favstats/metatargetr
+
+### BibTeX Entry
+
+```bibtex
+@misc{votta2024metatargetr,
+  author = {Votta, Fabio and Mendoza, Philipp},
+  title = {metatargetr: A package for parsing and analyzing ad library and targeting data},
+  year = {2024},
+  publisher = {GitHub},
+  url = {https://github.com/favstats/metatargetr}
+}
+```
+
+### Additional Notes
+
+If you use data from the `metatargetr` database, please include the following acknowledgement in your work:
+
+> Data were retrieved from the `metatargetr` database, maintained by Fabio Votta. The database archives targeting data from the Meta Ad Library and Google Transparency Report. For more information, visit https://github.com/favstats/metatargetr.
+
+By including these citations and acknowledgements, you help support the continued development of `metatargetr` and its associated resources. Thank you for your collaboration! 
+
+---
