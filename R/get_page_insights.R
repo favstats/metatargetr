@@ -164,18 +164,24 @@ if( "page_info" %in% include_info) {
 
 
 
-  creat_times <-
-    out[[1]][["data"]][["page"]][["pages_transparency_info"]][["history_items"]] %>%
-    dplyr::mutate(event = paste0(
-      item_type,
-      ": ",
-      as.POSIXct(event_time, origin = "1970-01-01", tz = "UTC")
-    )) %>%
-    dplyr::select(event) %>%
-    unlist() %>% t() %>% as.data.frame()
-
-  about_text <-
-    out[[1]][["data"]][["page"]][["about"]] %>% purrr::set_names("about")
+    creat_times <- out[[1]][["data"]][["page"]][["pages_transparency_info"]][["history_items"]] 
+  
+    if (!is.null(creat_times)) {
+      creat_times <- creat_times %>%  dplyr::mutate(event = paste0(item_type, ": ", as.POSIXct(event_time, 
+                                                                                                origin = "1970-01-01", tz = "UTC"))) %>% dplyr::select(event) %>% 
+        unlist() %>% t() %>% as.data.frame()
+    }  else {
+      creat_times <- tibble(no_times = T)
+    }    
+    
+    about_text <- out[[1]][["data"]][["page"]][["about"]]
+  
+    if (!is.null(about_text)) {
+      about_text <- about_text  %>% 
+        purrr::set_names("about")    
+    } else {
+      about_text <- tibble(no_about = T)
+    }
 
   address_raw <- out[[1]][["data"]][["page"]][["confirmed_page_owner"]][["information"]]
   if(!is.null(address_raw)){
