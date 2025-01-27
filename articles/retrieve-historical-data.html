@@ -59,7 +59,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1></h1>
+      <h1>Retrieve Historical Data</h1>
 
 
 
@@ -73,8 +73,8 @@
 
 
 
-    <header id="title-block-header" class="quarto-title-block"><h1 class="title">Retrieve Historical Data</h1></header><section class="section level3"><h3 id="accessing-historical-data">Accessing Historical Data<a class="anchor" aria-label="anchor" href="#accessing-historical-data"></a>
-</h3>
+    <section class="level2"><h2 id="accessing-historical-data">Accessing Historical Data<a class="anchor" aria-label="anchor" href="#accessing-historical-data"></a>
+</h2>
 <p>While Meta’s API only provides recent targeting data, metatargetr maintains an archive of historical targeting data. Access this using <code><a href="../reference/get_targeting_db.html">get_targeting_db()</a></code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
@@ -88,11 +88,11 @@
 <span><span class="co"># Retrieve historical data</span></span>
 <span><span class="va">historical_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_targeting_db.html">get_targeting_db</a></span><span class="op">(</span><span class="va">country_code</span>, <span class="va">timeframe</span>, <span class="va">date</span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="section level3"><h3 id="understanding-historical-data">Understanding Historical Data<a class="anchor" aria-label="anchor" href="#understanding-historical-data"></a>
-</h3>
+</section><section class="level2"><h2 id="understanding-historical-data">Understanding Historical Data<a class="anchor" aria-label="anchor" href="#understanding-historical-data"></a>
+</h2>
 <p>The historical data includes: - Daily targeting snapshots - Spending information - Page details - Targeting criteria used</p>
-</section><section class="section level3"><h3 id="getting-report-data">Getting Report Data<a class="anchor" aria-label="anchor" href="#getting-report-data"></a>
-</h3>
+</section><section class="level2"><h2 id="getting-report-data">Getting Report Data<a class="anchor" aria-label="anchor" href="#getting-report-data"></a>
+</h2>
 <p>For broader historical analysis, use <code><a href="../reference/get_report_db.html">get_report_db()</a></code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">

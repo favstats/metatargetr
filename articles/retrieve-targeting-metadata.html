@@ -59,7 +59,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1></h1>
+      <h1>Retrieve Targeting Metadata</h1>
 
 
 
@@ -73,16 +73,16 @@
 
 
 
-    <header id="title-block-header" class="quarto-title-block"><h1 class="title">Retrieve Targeting Metadata</h1></header><section class="section level3"><h3 id="overview-of-targeting-metadata">Overview of Targeting Metadata<a class="anchor" aria-label="anchor" href="#overview-of-targeting-metadata"></a>
-</h3>
+    <section class="level2"><h2 id="overview-of-targeting-metadata">Overview of Targeting Metadata<a class="anchor" aria-label="anchor" href="#overview-of-targeting-metadata"></a>
+</h2>
 <p>The <code><a href="../reference/retrieve_targeting_metadata.html">retrieve_targeting_metadata()</a></code> function helps you understand what targeting data is available in the archive. It provides information about:</p>
 <ul>
 <li><p>Available dates</p></li>
 <li><p>File sizes</p></li>
 <li><p>Data completeness</p></li>
 <li><p>Country coverage</p></li>
-</ul></section><section class="section level3"><h3 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
-</h3>
+</ul></section><section class="level2"><h2 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
+</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/favstats/metatargetr" class="external-link">metatargetr</a></span><span class="op">)</span></span>
@@ -93,16 +93,16 @@
 <span><span class="co"># View the metadata</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="section level3"><h3 id="understanding-the-output">Understanding the Output<a class="anchor" aria-label="anchor" href="#understanding-the-output"></a>
-</h3>
+</section><section class="level2"><h2 id="understanding-the-output">Understanding the Output<a class="anchor" aria-label="anchor" href="#understanding-the-output"></a>
+</h2>
 <p>The metadata includes:</p>
 <ul>
 <li><p>Country code</p></li>
 <li><p>Date stamps</p></li>
 <li><p>Timeframe information</p></li>
 <li><p>Data availability flags</p></li>
-</ul></section><section class="section level3"><h3 id="using-metadata-for-data-validation">Using Metadata for Data Validation<a class="anchor" aria-label="anchor" href="#using-metadata-for-data-validation"></a>
-</h3>
+</ul></section><section class="level2"><h2 id="using-metadata-for-data-validation">Using Metadata for Data Validation<a class="anchor" aria-label="anchor" href="#using-metadata-for-data-validation"></a>
+</h2>
 <p>#| eval: false # Check data availability before retrieval metadata &lt;- retrieve_targeting_metadata(“DE”, “30”)</p>
 <p>if (nrow(metadata) &gt; 0) { # Data is available, proceed with retrieval historical_data &lt;- get_targeting_db(“DE”, 30, metadata$ds[1]) }</p>
 </section><script id="quarto-html-after-body" type="application/javascript">

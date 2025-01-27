@@ -59,7 +59,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1></h1>
+      <h1>Retrieving Targeting Data</h1>
 
 
 
@@ -73,8 +73,8 @@
 
 
 
-    <header id="title-block-header" class="quarto-title-block"><h1 class="title">Retrieving Targeting Data</h1></header><section class="section level3"><h3 id="getting-recent-targeting-data">Getting Recent Targeting Data<a class="anchor" aria-label="anchor" href="#getting-recent-targeting-data"></a>
-</h3>
+    <section class="level2"><h2 id="getting-recent-targeting-data">Getting Recent Targeting Data<a class="anchor" aria-label="anchor" href="#getting-recent-targeting-data"></a>
+</h2>
 <p>The <code><a href="../reference/get_targeting.html">get_targeting()</a></code> function allows you to retrieve targeting data for specific time windows:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
@@ -89,16 +89,16 @@
 <span><span class="co"># Last 90 days</span></span>
 <span><span class="va">last90</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_targeting.html">get_targeting</a></span><span class="op">(</span><span class="st">"121264564551002"</span>, timeframe <span class="op">=</span> <span class="st">"LAST_90_DAYS"</span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="section level3"><h3 id="understanding-the-output">Understanding the Output<a class="anchor" aria-label="anchor" href="#understanding-the-output"></a>
-</h3>
+</section><section class="level2"><h2 id="understanding-the-output">Understanding the Output<a class="anchor" aria-label="anchor" href="#understanding-the-output"></a>
+</h2>
 <p>The function returns a data frame containing:</p>
 <ul>
 <li>Basic targeting information (gender, age, location)</li>
 <li>Detailed targeting options (interests, behaviors)</li>
 <li>Custom audience information</li>
 <li>Spending and reach metrics</li>
-</ul></section><section class="section level3"><h3 id="getting-page-information">Getting Page Information<a class="anchor" aria-label="anchor" href="#getting-page-information"></a>
-</h3>
+</ul></section><section class="level2"><h2 id="getting-page-information">Getting Page Information<a class="anchor" aria-label="anchor" href="#getting-page-information"></a>
+</h2>
 <p>Use <code><a href="../reference/get_page_insights.html">get_page_insights()</a></code> to retrieve additional page information:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
