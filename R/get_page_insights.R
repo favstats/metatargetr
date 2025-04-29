@@ -164,21 +164,21 @@ if( "page_info" %in% include_info) {
 
 
 
-    creat_times <- out[[1]][["data"]][["page"]][["pages_transparency_info"]][["history_items"]] 
-  
+    creat_times <- out[[1]][["data"]][["page"]][["pages_transparency_info"]][["history_items"]]
+
     if (!is.null(creat_times)) {
-      creat_times <- creat_times %>%  dplyr::mutate(event = paste0(item_type, ": ", as.POSIXct(event_time, 
-                                                                                                origin = "1970-01-01", tz = "UTC"))) %>% dplyr::select(event) %>% 
+      creat_times <- creat_times %>%  dplyr::mutate(event = paste0(item_type, ": ", as.POSIXct(event_time,
+                                                                                                origin = "1970-01-01", tz = "UTC"))) %>% dplyr::select(event) %>%
         unlist() %>% t() %>% as.data.frame()
     }  else {
       creat_times <- tibble(no_times = T)
-    }    
-    
+    }
+
     about_text <- out[[1]][["data"]][["page"]][["about"]]
-  
+
     if (!is.null(about_text)) {
-      about_text <- about_text  %>% 
-        purrr::set_names("about")    
+      about_text <- about_text  %>%
+        purrr::set_names("about")
     } else {
       about_text <- tibble(no_about = T)
     }
@@ -268,4 +268,60 @@ if( "page_info" %in% include_info & "targeting_info" %in% include_info  ) {
 return(fin)
 
 
+}
+
+
+#' Get Page Info Dataset for a Specific Country
+#'
+#' Downloads the historical Facebook or Instagram page info dataset for a given ISO2C country code.
+#' The data is retrieved from a fixed GitHub release URL in `.parquet` format. It includes information on:
+#' - Page-level metadata (e.g., name, verification status, profile type)
+#' - Audience metrics (e.g., number of likes, Instagram followers)
+#' - Shared disclaimers (if applicable)
+#' - Page creation and name change events with timestamps
+#' - Contact and address information (if available)
+#' - Free-text descriptions ("about" section)
+#'
+#'
+#' @param iso2c A string specifying the ISO-3166-1 alpha-2 country code (e.g., "DE", "FR", "US").
+#' @param verbose Logical. If TRUE (default), prints a status message when downloading.
+#'
+#' @return A tibble containing Facebook page info for the specified country.
+#'         If the dataset is not available or cannot be retrieved, a tibble with \code{no_data = TRUE}
+#'         and the given \code{iso2c} code is returned.
+#'
+#' @examples
+#' \dontrun{
+#'   de_info <- get_page_info_db("DE")
+#'   fr_info <- get_page_info_db("FR")
+#' }
+#'
+#' @export
+#'
+#' @importFrom arrow read_parquet
+#' @importFrom tibble tibble
+#' @importFrom dplyr mutate
+get_page_info_db <- function(iso2c, verbose = TRUE) {
+  # Validate input
+  if (missing(iso2c) || !is.character(iso2c) || nchar(iso2c) != 2) {
+    stop("Please provide a valid ISO2C country code, e.g., 'DE', 'FR', 'US'.")
+  }
+
+  # Construct URL
+  url <- sprintf(
+    "https://github.com/favstats/meta_ad_targeting/releases/download/PageInfo/%s-page_info.parquet",
+    iso2c
+  )
+
+  # Try to read
+  if (verbose) message("Downloading: ", url)
+
+  tryCatch({
+    df <- arrow::read_parquet(url)
+    dplyr::mutate(df, country_code = iso2c)
+  },
+  error = function(e) {
+    if (verbose) message("No data found for ", iso2c, ". Returning placeholder.")
+    tibble::tibble(country_code = iso2c, no_data = TRUE)
+  })
 }
