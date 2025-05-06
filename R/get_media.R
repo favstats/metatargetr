@@ -581,20 +581,23 @@ get_deeplink <- function(ad_id) {
   # 4. Parse JSON into list
   parsed_json <- jsonlite::fromJSON(json_string)
 
-  # 5. Flatten JSON into tidy tibble row
+  # 5. Start flattening
   df <- tibble::tibble(data = list(parsed_json)) %>%
-    tidyr::unnest_wider(data) %>%
-    tidyr::unnest_wider(fevInfo, names_sep = "_") %>%
-    tidyr::unnest_wider(fevInfo_free_form_additional_info, names_sep = "_") %>%
-    tidyr::unnest_wider(fevInfo_learn_more_content, names_sep = "_")
+    tidyr::unnest_wider(data)
 
-  # STEP 5: flatten snapshot (if exists)
+  # 6. Conditional unnesting
+  for (col in c("fevInfo", "fevInfo_free_form_additional_info", "fevInfo_learn_more_content")) {
+    if (col %in% names(df)) {
+      df <- tidyr::unnest_wider(df, {{col}}, names_sep = "_")
+    }
+  }
+
+  # 7. Flatten snapshot (if exists)
   if ("snapshot" %in% names(parsed_json)) {
     snapshot_flat <- tibble::tibble(snapshot = list(parsed_json$snapshot)) %>%
       tidyr::unnest_wider(snapshot, names_sep = "_")
 
-    # STEP 6: combine both
-    df <- bind_cols(df, snapshot_flat)
+    df <- dplyr::bind_cols(df, snapshot_flat)
   }
 
   return(df)
