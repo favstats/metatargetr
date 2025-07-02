@@ -107,7 +107,7 @@ fetch_fb_ad_html_many <- function(ad_ids,
         close(con)
 
         html_vec[i] <- html_raw
-        if (!quiet) message("✔ ", ids_dl[i])
+        # if (!quiet) message("✔ ", ids_dl[i])
     }
 
     # 6. Assemble results in original order ----------------------------------
@@ -135,3 +135,6 @@ fetch_fb_ad_html_many <- function(ad_ids,
     }
 
 }
+
+
+fetch_fb_ad_html_many("711082744873817", country = "NL")

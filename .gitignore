@@ -5,3 +5,4 @@
 .DS_Store
 data
 docs
+^html_cache

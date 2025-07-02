@@ -78,3 +78,4 @@ fetch_fb_ad_html_single <- function(ad_id,
     }
 }
 
+fetch_fb_ad_html_single("2279257635801270", country = "AU")

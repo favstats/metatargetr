@@ -9,7 +9,7 @@ get_targeting_db(the_cntry, tf, ds, remove_nas = T, verbose = F)
 \arguments{
 \item{the_cntry}{Character. The ISO country code (e.g., "DE", "US").}
 
-\item{tf}{Numeric or character. The timeframe in days (e.g., "30" or "LAST_30_DAYS").}
+\item{tf}{Numeric or character. The timeframe in days ("yesterday", "7", "30", "90", "lifelong"). Note, some data points for lifelong in the past may be missing for some countries.}
 
 \item{ds}{Character. A timestamp or identifier used to construct the file path (e.g., "2024-12-25").}
 }
@@ -20,6 +20,8 @@ A data frame containing the targeting data from the parquet file.
 This function retrieves targeting data for a specific country and timeframe
 from a GitHub repository hosting parquet files. The function uses the \code{arrow}
 package to read the parquet file directly from the specified URL.
+Note that the retreival of archived data is only possible three days after
+a specified date.
 }
 \examples{
 # Example usage
