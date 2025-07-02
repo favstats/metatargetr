@@ -1,4 +1,4 @@
-    # fetch_fb_ad_html_many() ---------------------------------------------------------------------------
+    # get_ad_html_many() ---------------------------------------------------------------------------
     #' Fetch many Facebook-Ad-Library pages (vectorised, cached, parallel)
     #'
     #' @param ad_ids         Character vector of Ad-Library IDs.
@@ -17,7 +17,7 @@
     #'                       a predefined list for each request to make it harder
     #'                       to track. Defaults to the value set during
     #'                       interactive setup, or FALSE.
-    #' @param log_failed_ids       If a character path is provided (e.g., "log.txt"),
+    #' @param log_failed_ids If a character path is provided (e.g., "log.txt"),
     #'                       a log of failed IDs will be written
     #'                       to that file. Default is NULL (no log file).
     #' @param timeout_sec, retries
@@ -30,7 +30,7 @@
     #' @return Either a named character vector of file paths or a named list of
     #'         HTML strings, in the *same order* as `ad_ids`.
     #' @export
-    fetch_fb_ad_html <- function(ad_ids,
+    get_ad_html <- function(ad_ids,
                                  country,
                                  cache_dir = NULL,
                                  overwrite = FALSE,
@@ -55,7 +55,7 @@
 
 
             cli::cli_h1("Welcome! Let's configure your settings.")
-            cli::cli_text("This will set session-wide defaults for {.code fetch_fb_ad_html}.")
+            cli::cli_text("This will set session-wide defaults for {.code get_ad_html}.")
 
             # Ask for cache directory, allowing user to skip
             cli::cli_alert_info("You can type {.val skip} at the first prompt to use the default settings.")
@@ -114,7 +114,7 @@
             randomize_ua <- getOption("metatargetr.randomize_ua", FALSE)
         }
         # Default User-Agent if not randomizing and none is provided
-        default_ua <- "metatargetr/1.2 (+https://example.org)"
+        default_ua <- "metatargetr"
         if (is.null(ua) && !randomize_ua) {
             ua <- default_ua
         }
@@ -271,8 +271,8 @@
     # ids <- readLines("dev/AU_ids.txt")
     #
     # library(tidyverse)
-    # # debugonce(fetch_fb_ad_html)
+    # # debugonce(get_ad_html)
     #
-    # fetch_fb_ad_html(ids[1:5], country = "AU",
+    # get_ad_html(ids[1:5], country = "AU",
     #                  interactive = F, log_failed_ids = "log.txt", overwrite = F) -> hi
 

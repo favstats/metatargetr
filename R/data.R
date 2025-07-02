@@ -186,9 +186,9 @@ get_report_db <- function(the_cntry, timeframe, ds, verbose = FALSE) {
 #'
 #' @examples
 #' # Retrieve metadata for Germany for the last 30 days
-#' metadata <- retrieve_targeting_metadata("DE", "30")
+#' metadata <- get_targeting_metadata("DE", "30")
 #' print(metadata)
-retrieve_targeting_metadata <- function(country_code,
+get_targeting_metadata <- function(country_code,
                                         timeframe,
                                         base_url = "https://github.com/favstats/meta_ad_targeting/releases/expanded_assets/") {
     # Validate inputs
