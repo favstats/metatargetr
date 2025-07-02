@@ -8,6 +8,7 @@ Authors@R:
            comment = c(ORCID = "YOUR-ORCID-ID")))
 Description: The metatargetr package provides tools for retrieving, parsing, and analyzing advertising targeting data from Meta’s Ad Library and Audience Tab.
 License: MIT + file LICENSE
+VignetteBuilder: quarto
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -24,11 +25,15 @@ Imports:
     rvest,
     readr,
     tidyr,
-    httr2
-Suggests:
-    OpenImageR,
-    testthat (>= 3.0.0),
+    httr2,
     arrow,
+    digest,
+    rlang,
+    xml2,
+    lubridate,
+    progress
+Suggests:
+    testthat (>= 3.0.0),
     quarto
-URL: https://github.com/favstats/metatargetr, https://favstats.github.io/metatargetr/
+URL: https://github.com/favstats/metatargetr
 BugReports: https://github.com/favstats/metatargetr/issues
