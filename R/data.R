@@ -3,6 +3,8 @@
 #' This function retrieves targeting data for a specific country and timeframe
 #' from a GitHub repository hosting parquet files. The function uses the `arrow`
 #' package to read the parquet file directly from the specified URL.
+#' Note that the retreival of archived data is only possible three days after
+#' a specified date.
 #'
 #' @param the_cntry Character. The ISO country code (e.g., "DE", "US").
 #' @param tf Numeric or character. The timeframe in days ("yesterday", "7", "30", "90", "lifelong"). Note, some data points for lifelong in the past may be missing for some countries.
