@@ -157,6 +157,12 @@
         reqs <- ids_dl %>% purrr::map(~build_req(.x, country, randomize_ua, ua, timeout_sec, retries))
 
         ## 5. Fire the requests in parallel ---------------------------------------
+
+        if (!quiet) {
+            cli::cli_alert_info("Making requests...")
+        }
+
+
         resps <- httr2::req_perform_parallel(
             reqs,
             on_error = "continue",
@@ -169,6 +175,18 @@
         ## 6. Post-process each response ------------------------------------------
         html_vec <- character(length(ids_dl))
 
+        # Initialize the progress bar if not in quiet mode
+        if (!quiet) {
+            cli::cli_alert_info("Processing HTMLs... may take a while.")
+            cli::ansi_with_hidden_cursor(fun_with_spinner2())
+            cli::cli_progress_bar(
+                "Processing...",
+                total = length(resps),
+                clear = FALSE # Keep the bar after finishing
+            )
+        }
+
+
         for (i in seq_along(resps)) {
             # (Inside the for-loop)
             resp <- resps[[i]]
@@ -177,18 +195,22 @@
             # Check for a low-level request error first
             if (inherits(resp, "error")) {
                 reason <- conditionMessage(resp)
-                cli::cli_warn(c("x" = "Request for ID {.val {current_id}} failed.", "!" = "Reason: {reason}"))
+                # Display warning without interrupting the progress bar
+                if (!quiet) cli::cli_alert_warning(c("x" = "Request for ID {.val {current_id}} failed.", "!" = "Reason: {reason}"))
                 html_vec[i] <- NA_character_
+                if (!quiet) cli::cli_progress_update() # Advance progress bar
                 next
             }
 
             # If the request succeeded, check for an HTTP error status code
             if (httr2::resp_status(resp) >= 400) {
                 reason <- httr2::resp_status_desc(resp)
-                cli::cli_warn(c("x" = "HTTP error for ID {.val {current_id}}.", "!" = "Status: {.strong {httr2::resp_status(resp)} {reason}}"))
+                if (!quiet) cli::cli_alert_warning(c("x" = "HTTP error for ID {.val {current_id}}.", "!" = "Status: {.strong {httr2::resp_status(resp)} {reason}}"))
                 html_vec[i] <- NA_character_
+                if (!quiet) cli::cli_progress_update() # Advance progress bar
                 next
-        }
+            }
+
             html_raw <- httr2::resp_body_string(resp)
 
             if (strip_css) {
@@ -204,8 +226,19 @@
             close(con)
 
             html_vec[i] <- html_raw
-            # if (!quiet) message("✔ ", ids_dl[i])
+
+            # Add a success message for verbose output
+            if (!quiet) {
+                # Using cli_alert_success for nicely formatted output
+                # Advance the progress bar
+                cli::cli_progress_update()
+            }
         }
+
+        # Ensure the progress bar is marked as done
+        # if (!quiet) {
+        #     cli::cli_progress_done()
+        # }
 
 
         # 7. Assemble results in original order ----------------------------------
@@ -269,10 +302,10 @@
     }
 
     # ids <- readLines("dev/AU_ids.txt")
-    #
-    # library(tidyverse)
-    # # debugonce(get_ad_html)
-    #
-    # get_ad_html(ids[1:5], country = "AU",
-    #                  interactive = F, log_failed_ids = "log.txt", overwrite = F) -> hi
+    # #
+    # # library(tidyverse)
+    # # # debugonce(get_ad_html)
+    # #
+    # get_ad_html(sample(ids, 100), country = "AU",
+    #                  interactive = F, log_failed_ids = "log.txt", overwrite = F, quiet = F) -> hi
 
