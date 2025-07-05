@@ -130,3 +130,88 @@ get_targeting <- function(id, timeframe = "LAST_30_DAYS", lang = "en-GB", legacy
 
 }
 
+
+#' Aggregate a Pre-Combined Targeting Dataset
+#'
+#' This function takes a single dataframe, assumed to be the result of
+#' `bind_rows()` on multiple targeting datasets from different time periods.
+#' It correctly aggregates the spending for each unique targeting criterion
+#' and calculates the new totals and percentages based on the combined data.
+#'
+#' @param combined_df A single dataframe that has already been combined from
+#'   multiple sources (e.g., via `dplyr::bind_rows`).
+#' @param filter_disclaimer An optional character vector of disclaimers or page
+#'   names to filter the dataset before aggregation. If NULL (default), all
+#'   data is used.
+#'
+#' @return A single, aggregated tibble where each row represents a unique targeting
+#'   criterion for an advertiser across the combined period.
+#'
+#' @import dplyr
+#' @import readr
+#'
+aggr_targeting <- function(combined_df) {
+
+  # --- 1. Prepare the Combined Dataset ---
+
+  # Ensure all relevant columns are parsed as numbers for calculations
+  prepared_data <- combined_df %>%
+    dplyr::mutate(
+      across(c(total_spend_pct, total_spend_formatted, num_ads, total_num_ads),
+             ~readr::parse_number(as.character(.)))
+    )
+
+  # --- 2. Correctly Calculate Overall Page Totals ---
+
+  # The key to fixing the error is to calculate the true total spend for each
+  # advertiser across ALL underlying datasets. The `ds` column (dataset source)
+  # is crucial for this.
+  page_overall_totals <- prepared_data %>%
+    # First, find the unique total spend for each page within each source dataset
+    dplyr::distinct(page_id, ds, .keep_all = TRUE) %>%
+    # Now, sum these unique totals to get the true overall spend
+    dplyr::group_by(page_id) %>%
+    dplyr::summarise(
+      total_spend = sum(total_spend_formatted, na.rm = TRUE),
+      total_num_ads = sum(total_num_ads, na.rm = TRUE),
+      .groups = "drop"
+    )
+
+  # --- 3. Aggregate Spending by Unique Targeting Criterion ---
+
+  targeting_group_vars <- c(
+    "page_id", "page_name", "disclaimer", "value", "type", "location_type",
+    "main_currency", "is_exclusion", "detailed_type", "num_obfuscated",
+    "custom_audience_type", "cntry"
+  )
+
+  aggregated_criteria <- prepared_data %>%
+    # Calculate the absolute spend for each individual criterion row
+    dplyr::mutate(criterion_spend = total_spend_formatted * total_spend_pct) %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(targeting_group_vars))) %>%
+    dplyr::summarise(
+      # Sum the spend and ad counts for each unique targeting group
+      spend_per = sum(criterion_spend, na.rm = TRUE),
+      num_ads = sum(num_ads, na.rm = TRUE),
+      .groups = "drop"
+    )
+
+  # --- 4. Final Join and Recalculation ---
+
+  final_data <- aggregated_criteria %>%
+    # Join the correct overall totals back to the aggregated criteria data
+    dplyr::left_join(page_overall_totals, by = "page_id") %>%
+    # Recalculate the percentage based on the new, correct total spend
+    dplyr::mutate(
+      total_spend_pct = ifelse(total_spend > 0, spend_per / total_spend, 0)
+    ) %>%
+    # Add the internal_id and select/order columns for the final output
+    dplyr::mutate(internal_id = as.character(page_id)) %>%
+    dplyr::select(
+      page_id, page_name, disclaimer, value, type, location_type, main_currency,
+      is_exclusion, detailed_type, num_obfuscated, custom_audience_type, cntry,
+      spend_per, total_spend, num_ads, total_num_ads, total_spend_pct, internal_id, everything()
+    )
+
+  return(final_data)
+}
