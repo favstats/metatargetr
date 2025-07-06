@@ -31,7 +31,12 @@ Imports:
     rlang,
     xml2,
     lubridate,
-    progress
+    progress,
+    cli,
+    digest, 
+    janitor, 
+    vroom,
+    pacman
 Suggests:
     testthat (>= 3.0.0),
     quarto

@@ -3,9 +3,11 @@
 #' This function retrieves targeting data for a specific country and timeframe
 #' from a GitHub repository hosting parquet files. The function uses the `arrow`
 #' package to read the parquet file directly from the specified URL.
+#' Note that the retreival of archived data is only possible three days after
+#' a specified date.
 #'
 #' @param the_cntry Character. The ISO country code (e.g., "DE", "US").
-#' @param tf Numeric or character. The timeframe in days (e.g., "30" or "LAST_30_DAYS").
+#' @param tf Numeric or character. The timeframe in days ("yesterday", "7", "30", "90", "lifelong"). Note, some data points for lifelong in the past may be missing for some countries.
 #' @param ds Character. A timestamp or identifier used to construct the file path (e.g., "2024-12-25").
 #' @return A data frame containing the targeting data from the parquet file.
 #' @importFrom arrow read_parquet
@@ -184,9 +186,9 @@ get_report_db <- function(the_cntry, timeframe, ds, verbose = FALSE) {
 #'
 #' @examples
 #' # Retrieve metadata for Germany for the last 30 days
-#' metadata <- retrieve_targeting_metadata("DE", "30")
+#' metadata <- get_targeting_metadata("DE", "30")
 #' print(metadata)
-retrieve_targeting_metadata <- function(country_code,
+get_targeting_metadata <- function(country_code,
                                         timeframe,
                                         base_url = "https://github.com/favstats/meta_ad_targeting/releases/expanded_assets/") {
     # Validate inputs
@@ -194,8 +196,13 @@ retrieve_targeting_metadata <- function(country_code,
         stop("Parameter `country_code` is required.")
     }
 
-    if (missing(timeframe) || !timeframe %in% c("7", "30", "90")) {
-        stop("`timeframe` must be one of: '7', '30', or '90'.")
+
+    if(timeframe %in% c(7, "LAST_7_DAYS")){
+        timeframe <- "7"
+    } else if(timeframe %in% c(30, "LAST_30_DAYS")){
+        timeframe <- "30"
+    } else if(timeframe %in% c(90, "LAST_90_DAYS")){
+        timeframe <- "90"
     }
 
     # Timeframe suffix for filtering

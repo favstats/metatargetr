@@ -8,3 +8,5 @@
 ^pkgdown$
 ^\.github$
 ^vignettes/\\.quarto$
+^dev
+^html_cache
