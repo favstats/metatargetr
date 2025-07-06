@@ -196,8 +196,13 @@ get_targeting_metadata <- function(country_code,
         stop("Parameter `country_code` is required.")
     }
 
-    if (missing(timeframe) || !timeframe %in% c("7", "30", "90")) {
-        stop("`timeframe` must be one of: '7', '30', or '90'.")
+
+    if(timeframe %in% c(7, "LAST_7_DAYS")){
+        timeframe <- "7"
+    } else if(timeframe %in% c(30, "LAST_30_DAYS")){
+        timeframe <- "30"
+    } else if(timeframe %in% c(90, "LAST_90_DAYS")){
+        timeframe <- "90"
     }
 
     # Timeframe suffix for filtering

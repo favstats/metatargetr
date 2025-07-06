@@ -1,5 +1,3 @@
-pacman::p_load(tidyverse, cli, reticulate, glue, playwrightr, digest, janitor, vroom)
-
 #' Closes a Playwright browser instance
 #'
 #' @description

@@ -36,6 +36,14 @@
 #' @importFrom tibble as_tibble
 get_page_insights <- function(pageid, timeframe = "LAST_30_DAYS", lang = "en-GB", iso2c = "US", include_info = c("page_info", "targeting_info"), join_info = T) {
 
+  if(timeframe %in% c(7, "7")){
+    timeframe <- "LAST_7_DAYS"
+  } else if(timeframe %in% c(30, "30")){
+    timeframe <- "LAST_30_DAYS"
+  } else if(timeframe %in% c(90, "90")){
+    timeframe <- "LAST_90_DAYS"
+  }
+
   # Randomize the user agent
 ua_list <- c(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
