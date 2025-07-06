@@ -114,7 +114,7 @@
 </h2>
 <p>You can install the development version of metatargetr like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"favstats/metatargetr"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"favstats/metatargetr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="load-in-package">Load in Package<a class="anchor" aria-label="anchor" href="#load-in-package"></a>
@@ -295,7 +295,7 @@ The base URL for the GitHub repository hosting the targeting data.</p></li>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Retrieve metadata for Germany for the last 30 days</span></span>
-<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/retrieve_targeting_metadata.html">retrieve_targeting_metadata</a></span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"30"</span><span class="op">)</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu">retrieve_targeting_metadata</span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"30"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 314 × 3</span></span>
