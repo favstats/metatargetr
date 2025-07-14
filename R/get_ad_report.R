@@ -70,6 +70,7 @@ execute_script <- function (page_df, script) {
 #' Set up and initialize the playwrightr environment
 #'
 #' @keywords internal
+#' @export
 setup_playwright <- function() {
   if (!require("pacman")) install.packages("pacman")
   pacman::p_load(reticulate, playwrightr, cli)
@@ -116,7 +117,7 @@ setup_playwright <- function() {
 #' @param date A character vector of report dates in "YYYY-MM-DD" format.
 #'
 #' @return A single tibble containing the combined data for all successful requests.
-#'
+#' @export
 get_ad_report <- function(country, timeframe, date) {
 
   # --- 1. SETUP ---
