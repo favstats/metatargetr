@@ -114,12 +114,22 @@ get_report_db <- function(the_cntry, timeframe, ds, verbose = FALSE) {
     # Construct the file name
     file_name <- paste0(ds, ".rds")
 
-    # Construct the URL
-    url <- paste0(
-        "https://github.com/favstats/meta_ad_reports/releases/download/",
-        the_cntry, tf_string, "/",
-        file_name
-    )
+    if(as.Date(ds) > as.Date("2025-07-05")){
+        # Construct the URL
+        url <- paste0(
+            "https://github.com/favstats/meta_ad_reports2/releases/download/",
+            the_cntry, tf_string, "/",
+            file_name
+        )
+    } else {
+        # Construct the URL
+        url <- paste0(
+            "https://github.com/favstats/meta_ad_reports/releases/download/",
+            the_cntry, tf_string, "/",
+            file_name
+        )
+    }
+
 
     # Temporary file path
     temp_file <- tempfile(fileext = ".rds")
