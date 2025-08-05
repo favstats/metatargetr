@@ -95,7 +95,9 @@ get_linkedin_ads <- function(keyword,
     html_content <- httr2::resp_body_html(resp)
     all_detail_paths[[page_count]] <- html_content %>%
         rvest::html_elements("a[data-tracking-control-name='ad_library_view_ad_detail']") %>%
-        rvest::html_attr("href")
+        rvest::html_attr("href")  %>%
+        httr2::req_timeout(timeout_seconds) %>%
+        httr2::req_retry(max_tries = max_retries)
 
     pagination_data <- extract_pagination_data(html_content)
     pagination_token <- pagination_data$paginationToken
