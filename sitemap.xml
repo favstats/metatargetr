@@ -28,6 +28,7 @@
 <url><loc>/reference/get_ads_info.html</loc></url>
 <url><loc>/reference/get_deeplink.html</loc></url>
 <url><loc>/reference/get_ggl_ads.html</loc></url>
+<url><loc>/reference/get_linkedin_ads.html</loc></url>
 <url><loc>/reference/get_page_info_db.html</loc></url>
 <url><loc>/reference/get_page_insights.html</loc></url>
 <url><loc>/reference/get_report_db.html</loc></url>
@@ -37,6 +38,7 @@
 <url><loc>/reference/ggl_get_spending.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/map_dfr_progress.html</loc></url>
+<url><loc>/reference/parse_linkedin_ads_details.html</loc></url>
 <url><loc>/reference/parse_location.html</loc></url>
 <url><loc>/reference/pipe.html</loc></url>
 <url><loc>/reference/set_metatargetr_options.html</loc></url>
