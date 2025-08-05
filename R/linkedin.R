@@ -63,7 +63,9 @@ get_linkedin_ads <- function(keyword,
     message("Fetching first page...")
     req <- httr2::request(base_search_url) %>%
         httr2::req_url_query(!!!query_params) %>%
-        httr2::req_user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
+        httr2::req_user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36") %>%
+        httr2::req_timeout(timeout_seconds) %>%
+        httr2::req_retry(max_tries = max_retries)
 
     resp <- tryCatch(httr2::req_perform(req), error = function(e) {
         warning(paste("Failed to retrieve data from LinkedIn. Error:", e$message))
@@ -95,9 +97,7 @@ get_linkedin_ads <- function(keyword,
     html_content <- httr2::resp_body_html(resp)
     all_detail_paths[[page_count]] <- html_content %>%
         rvest::html_elements("a[data-tracking-control-name='ad_library_view_ad_detail']") %>%
-        rvest::html_attr("href")  %>%
-        httr2::req_timeout(timeout_seconds) %>%
-        httr2::req_retry(max_tries = max_retries)
+        rvest::html_attr("href")
 
     pagination_data <- extract_pagination_data(html_content)
     pagination_token <- pagination_data$paginationToken
