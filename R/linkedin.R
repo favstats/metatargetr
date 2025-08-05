@@ -109,7 +109,8 @@ get_linkedin_ads <- function(keyword,
         pag_req <- httr2::request(pagination_url) %>%
             httr2::req_url_query(!!!query_params, paginationToken = pagination_token) %>%
             httr2::req_user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36") %>%
-            httr2::req_retry(max_tries = 3) # Add retries to pagination requests too
+            httr2::req_timeout(timeout_seconds) %>%
+            httr2::req_retry(max_tries = max_retries)
 
         pag_resp <- tryCatch(httr2::req_perform(pag_req), error = function(e) NULL)
 
