@@ -237,3 +237,5 @@ get_ad_report <- function(country, timeframe, date) {
 #   timeframe = "lifelong",
 #   date = c("2025-01-20", "2025-06-30")
 # )
+
+# get_targeting_db("NO", "30", "2025-07-10") %>% View()
