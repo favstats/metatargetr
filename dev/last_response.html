@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ad Library</title>
+</head>
+<body>
+<script>
+
+(function() {
+  if (document.readyState !== 'loading') {
+    executeChallenge();
+  } else {
+    document.addEventListener('DOMContentLoaded', executeChallenge);
+  }
+  function executeChallenge() {
+    fetch('/__rd_verify_Q_6hBQP4jW8Mq_UPa6j-SK6Ld8nhUUvSbQeWa3g0ei9PjxMnlQ?challenge=3', {
+      method: 'POST',
+    })
+    .finally(() => window.location.reload());
+  }
+})();
+
+</script>
+</body>
+</html>
+

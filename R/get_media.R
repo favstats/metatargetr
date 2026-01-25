@@ -98,29 +98,89 @@ stupid_conversion <- function(x) {
 
 #' Get ad snapshots from Facebook ad library
 #'
+#' Retrieves snapshot data for a Facebook ad from the Ad Library.
+#' This function uses headless Chrome (via chromote) to bypass Facebook's
+#' JavaScript-based bot detection.
+#'
 #' @param ad_id A character string specifying the ad ID.
 #' @param download Logical, whether to download media files.
 #' @param mediadir Directory to save media files.
 #' @param hashing Logical, whether to hash the files. RECOMMENDED!
+#' @param wait_sec Seconds to wait for page to load (default 4). Increase if
+#'   you're getting empty results.
 #' @return A tibble with ad details.
 #' @export
-get_ad_snapshots <- function(ad_id, download = F, mediadir = "data/media", hashing = F) {
+get_ad_snapshots <- function(ad_id, download = FALSE, mediadir = "data/media",
+                              hashing = FALSE, wait_sec = 4) {
 
-    html_raw <- rvest::read_html(glue::glue("https://www.facebook.com/ads/library/?id={ad_id}"))
-    script_seg <- html_raw %>%
+    if (!requireNamespace("chromote", quietly = TRUE)) {
+        stop("Package 'chromote' is required. Install with: install.packages('chromote')")
+    }
+
+    url <- glue::glue("https://www.facebook.com/ads/library/?id={ad_id}")
+
+    # Check for persistent session, otherwise create a temporary one
+    persistent_session <- get_browser_session()
+    if (!is.null(persistent_session)) {
+        b <- persistent_session
+        close_on_exit <- FALSE
+    } else {
+        b <- chromote::ChromoteSession$new()
+        close_on_exit <- TRUE
+    }
+
+    if (close_on_exit) {
+        on.exit(b$close(), add = TRUE)
+    }
+
+    # Navigate and wait for JS challenge to complete
+    b$Page$navigate(url)
+    Sys.sleep(wait_sec)
+
+    # Get page HTML after JS execution
+
+    result <- b$Runtime$evaluate("document.documentElement.outerHTML")
+    html_content <- result$result$value
+
+    # Check if we got the actual page content
+    if (!grepl("snapshot", html_content)) {
+        if (grepl("__rd_verify_", html_content)) {
+            warning("Facebook JS challenge not completed. Try increasing wait_sec parameter.")
+        }
+        warning("No snapshot data found for ad ID: ", ad_id)
+        return(tibble::tibble(id = ad_id))
+    }
+
+    # Extract snapshot from script tags
+    script_seg <- html_content %>%
+        rvest::read_html() %>%
         rvest::html_nodes("script") %>%
         as.character() %>%
         .[stringr::str_detect(., "snapshot")]
-    dataasjson <- detectmysnap(script_seg)
+
+    if (length(script_seg) == 0) {
+        warning("No snapshot script tag found for ad ID: ", ad_id)
+        return(tibble::tibble(id = ad_id))
+    }
+
+    # Try to parse the snapshot JSON, handle errors gracefully
+    dataasjson <- tryCatch({
+        detectmysnap(script_seg)
+    }, error = function(e) {
+        warning("Failed to parse snapshot JSON for ad ID: ", ad_id, " - ", e$message)
+        return(NULL)
+    })
+
+    if (is.null(dataasjson)) {
+        return(tibble::tibble(id = ad_id))
+    }
+
     fin <- dataasjson %>%
         stupid_conversion() %>%
         dplyr::mutate(id = ad_id)
 
     if (download) {
-        # try({
-        fin %>% download_media(mediadir = mediadir,
-                               hashing)
-        # })
+        fin %>% download_media(mediadir = mediadir, hashing = hashing)
     }
 
     return(fin)
@@ -519,7 +579,7 @@ if(F){
 #'
 #' The function performs the following steps internally:
 #'
-#' 1. Fetches the ad page HTML from Facebook's Ad Library for the specified `ad_id`.
+#' 1. Fetches the ad page HTML from Facebook's Ad Library using headless Chrome.
 #' 2. Locates the `<script>` tag containing the `deeplinkAdCard` object.
 #' 3. Uses a recursive regular expression to extract the full JSON object following `deeplinkAdCard`.
 #' 4. Parses the JSON string into a nested R list.
@@ -533,6 +593,7 @@ if(F){
 #' Use `get_deeplink()` when additional metadata embedded under `deeplinkAdCard` is required.
 #'
 #' @param ad_id Character string specifying the Facebook ad ID (as shown in the Ad Library URL).
+#' @param wait_sec Seconds to wait for page to load (default 4). Increase if getting errors.
 #' @return A tibble with one row, containing flattened columns extracted from the deeplink JSON object.
 #' Columns depend on the structure of the JSON and may include fields like `fevInfo_*`,
 #' `fevInfo_free_form_additional_info_*`, `fevInfo_learn_more_content_*`, and snapshot-related columns.
@@ -546,18 +607,55 @@ if(F){
 #' }
 #'
 #' @export
-get_deeplink <- function(ad_id) {
+get_deeplink <- function(ad_id, wait_sec = 4) {
 
-  html_raw <- rvest::read_html(glue::glue("https://www.facebook.com/ads/library/?id={ad_id}"))
+  if (!requireNamespace("chromote", quietly = TRUE)) {
+    stop("Package 'chromote' is required. Install with: install.packages('chromote')")
+  }
 
-  script_seg <- html_raw %>% rvest::html_nodes("script") %>%
-    as.character() %>% .[stringr::str_detect(., "snapshot")]
+  url <- glue::glue("https://www.facebook.com/ads/library/?id={ad_id}")
 
+  # Check for persistent session, otherwise create a temporary one
+  persistent_session <- get_browser_session()
+  if (!is.null(persistent_session)) {
+    b <- persistent_session
+    close_on_exit <- FALSE
+  } else {
+    b <- chromote::ChromoteSession$new()
+    close_on_exit <- TRUE
+  }
+
+  if (close_on_exit) {
+    on.exit(b$close(), add = TRUE)
+  }
+
+  # Navigate and wait for JS challenge to complete
+  b$Page$navigate(url)
+  Sys.sleep(wait_sec)
+
+  # Get page HTML after JS execution
+  result <- b$Runtime$evaluate("document.documentElement.outerHTML")
+  html_content <- result$result$value
+
+  # Check if we got past the challenge
+  if (grepl("__rd_verify_", html_content) && !grepl("snapshot", html_content)) {
+    stop("Facebook JS challenge not completed. Try increasing wait_sec parameter.")
+  }
+
+  script_seg <- html_content %>%
+    rvest::read_html() %>%
+    rvest::html_nodes("script") %>%
+    as.character() %>%
+    .[stringr::str_detect(., "snapshot")]
+
+  if (length(script_seg) == 0) {
+    stop("No script tag with snapshot data found for ad ID: ", ad_id)
+  }
 
   # 1. Extract the part after "deeplinkAdCard":
   haystackpart <- script_seg %>%
     stringr::str_split('"deeplinkAdCard":') %>%
-    purrr::pluck(1, 2)  # f
+    purrr::pluck(1, 2)
 
   if (is.null(haystackpart)) {
     stop("No 'deeplinkAdCard' found in input.")

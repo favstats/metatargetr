@@ -4,7 +4,13 @@
 \alias{get_ad_snapshots}
 \title{Get ad snapshots from Facebook ad library}
 \usage{
-get_ad_snapshots(ad_id, download = F, mediadir = "data/media", hashing = F)
+get_ad_snapshots(
+  ad_id,
+  download = FALSE,
+  mediadir = "data/media",
+  hashing = FALSE,
+  wait_sec = 4
+)
 }
 \arguments{
 \item{ad_id}{A character string specifying the ad ID.}
@@ -14,10 +20,15 @@ get_ad_snapshots(ad_id, download = F, mediadir = "data/media", hashing = F)
 \item{mediadir}{Directory to save media files.}
 
 \item{hashing}{Logical, whether to hash the files. RECOMMENDED!}
+
+\item{wait_sec}{Seconds to wait for page to load (default 4). Increase if
+you're getting empty results.}
 }
 \value{
 A tibble with ad details.
 }
 \description{
-Get ad snapshots from Facebook ad library
+Retrieves snapshot data for a Facebook ad from the Ad Library.
+This function uses headless Chrome (via chromote) to bypass Facebook's
+JavaScript-based bot detection.
 }

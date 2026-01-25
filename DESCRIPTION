@@ -36,7 +36,8 @@ Imports:
     digest, 
     janitor, 
     vroom,
-    pacman
+    pacman,
+    chromote (>= 0.2.0)
 Suggests:
     testthat (>= 3.0.0),
     quarto

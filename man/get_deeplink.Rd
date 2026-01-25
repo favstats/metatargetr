@@ -4,10 +4,12 @@
 \alias{get_deeplink}
 \title{Extract and flatten 'deeplinkAdCard' JSON from a Facebook Ad Library page}
 \usage{
-get_deeplink(ad_id)
+get_deeplink(ad_id, wait_sec = 4)
 }
 \arguments{
 \item{ad_id}{Character string specifying the Facebook ad ID (as shown in the Ad Library URL).}
+
+\item{wait_sec}{Seconds to wait for page to load (default 4). Increase if getting errors.}
 }
 \value{
 A tibble with one row, containing flattened columns extracted from the deeplink JSON object.
@@ -21,7 +23,7 @@ from the source code of a Facebook Ad Library ad page.
 \details{
 The function performs the following steps internally:
 \enumerate{
-\item Fetches the ad page HTML from Facebook's Ad Library for the specified \code{ad_id}.
+\item Fetches the ad page HTML from Facebook's Ad Library using headless Chrome.
 \item Locates the \verb{<script>} tag containing the \code{deeplinkAdCard} object.
 \item Uses a recursive regular expression to extract the full JSON object following \code{deeplinkAdCard}.
 \item Parses the JSON string into a nested R list.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_ad_html.R
 \name{get_ad_html}
 \alias{get_ad_html}
-\title{Fetch many Facebook-Ad-Library pages (vectorised, cached, parallel)}
+\title{Fetch Facebook Ad-Library pages (with caching)}
 \usage{
 get_ad_html(
   ad_ids,
@@ -10,13 +10,8 @@ get_ad_html(
   cache_dir = NULL,
   overwrite = FALSE,
   strip_css = TRUE,
-  max_active = 8,
+  wait_sec = 3,
   log_failed_ids = NULL,
-  ua = NULL,
-  randomize_ua = NULL,
-  interactive = FALSE,
-  timeout_sec = 15,
-  retries = 3L,
   quiet = FALSE,
   return_type = c("paths", "list")
 )
@@ -32,29 +27,12 @@ or "html_cache".}
 
 \item{overwrite}{If FALSE (default) keep already-cached files.}
 
-\item{strip_css}{Run the same fast, regex-based CSS removal as the
-single-ID helper \strong{only on newly-downloaded pages}.}
+\item{strip_css}{Run fast regex-based CSS removal on downloaded pages.}
 
-\item{max_active}{Maximum number of concurrent sockets passed to
-\code{httr2::req_perform_parallel()} (default = 8).}
+\item{wait_sec}{Seconds to wait for each page to load (default 3).}
 
 \item{log_failed_ids}{If a character path is provided (e.g., "log.txt"),
-a log of failed IDs will be written
-to that file. Default is NULL (no log file).}
-
-\item{ua}{User-Agent string. If NULL (default), uses a standard
-or randomized UA based on \code{randomize_ua}.}
-
-\item{randomize_ua}{Boolean. If TRUE, a random User-Agent is chosen from
-a predefined list for each request to make it harder
-to track. Defaults to the value set during
-interactive setup, or FALSE.}
-
-\item{interactive}{If TRUE, run a one-time interactive setup to configure
-and save default settings. Default is FALSE.}
-
-\item{timeout_sec, }{retries
-Passed through to the underlying requests.}
+failed IDs will be appended to that file.}
 
 \item{quiet}{Suppress progress messages.}
 
@@ -65,5 +43,6 @@ Either a named character vector of file paths or a named list of
 HTML strings, in the \emph{same order} as \code{ad_ids}.
 }
 \description{
-Fetch many Facebook-Ad-Library pages (vectorised, cached, parallel)
+Retrieves HTML content for Facebook Ad Library pages using headless Chrome
+to bypass JavaScript-based bot detection. Results are cached to disk.
 }
