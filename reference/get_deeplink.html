@@ -48,7 +48,7 @@ from the source code of a Facebook Ad Library ad page.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_deeplink</span><span class="op">(</span><span class="va">ad_id</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_deeplink</span><span class="op">(</span><span class="va">ad_id</span>, wait_sec <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -57,6 +57,10 @@ from the source code of a Facebook Ad Library ad page.</p>
 
 <dl><dt id="arg-ad-id">ad_id<a class="anchor" aria-label="anchor" href="#arg-ad-id"></a></dt>
 <dd><p>Character string specifying the Facebook ad ID (as shown in the Ad Library URL).</p></dd>
+
+
+<dt id="arg-wait-sec">wait_sec<a class="anchor" aria-label="anchor" href="#arg-wait-sec"></a></dt>
+<dd><p>Seconds to wait for page to load (default 4). Increase if getting errors.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -67,7 +71,7 @@ Columns depend on the structure of the JSON and may include fields like <code>fe
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function performs the following steps internally:</p><ol><li><p>Fetches the ad page HTML from Facebook's Ad Library for the specified <code>ad_id</code>.</p></li>
+    <p>The function performs the following steps internally:</p><ol><li><p>Fetches the ad page HTML from Facebook's Ad Library using headless Chrome.</p></li>
 <li><p>Locates the <code>&lt;script&gt;</code> tag containing the <code>deeplinkAdCard</code> object.</p></li>
 <li><p>Uses a recursive regular expression to extract the full JSON object following <code>deeplinkAdCard</code>.</p></li>
 <li><p>Parses the JSON string into a nested R list.</p></li>

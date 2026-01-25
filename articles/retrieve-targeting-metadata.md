@@ -1,0 +1,47 @@
+# Retrieve Targeting Metadata
+
+## Overview of Targeting Metadata
+
+The `retrieve_targeting_metadata()` function helps you understand what
+targeting data is available in the archive. It provides information
+about:
+
+- Available dates
+
+- File sizes
+
+- Data completeness
+
+- Country coverage
+
+## Basic Usage
+
+``` r
+library(metatargetr)
+
+# Get metadata for Germany's 30-day data
+metadata <- retrieve_targeting_metadata("DE", "30")
+
+# View the metadata
+print(metadata)
+```
+
+## Understanding the Output
+
+The metadata includes:
+
+- Country code
+
+- Date stamps
+
+- Timeframe information
+
+- Data availability flags
+
+## Using Metadata for Data Validation
+
+\#\| eval: false \# Check data availability before retrieval metadata
+\<- retrieve_targeting_metadata(“DE”, “30”)
+
+if (nrow(metadata) \> 0) { \# Data is available, proceed with retrieval
+historical_data \<- get_targeting_db(“DE”, 30, metadata\$ds\[1\]) }
