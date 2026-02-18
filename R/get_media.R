@@ -46,16 +46,37 @@ detectmysnap_dep <- function(rawhtmlascharacter) {
         return()
 }
 
-#' Updated function to detect the JSON code on Facebook ad websites
+#' Detect and parse the snapshot JSON from a Facebook Ad Library script tag
+#'
+#' Splits the raw HTML on `"snapshot":`, extracts the first JSON object
+#' using a recursive regex, and parses it with `jsonlite::fromJSON()`.
+#' Includes input validation at each step to produce clear error messages
+#' instead of cryptic JSON parse failures.
 #'
 #' @inheritParams detectmysnap_dep
-#' @return A parsed JSON object.
+#' @return A parsed JSON object (list).
+#' @seealso [get_ad_snapshots()] which calls this function internally.
 detectmysnap <- function(rawhtmlascharacter) {
+    # Guard against NA, NULL, or empty input
+    if (length(rawhtmlascharacter) == 0 ||
+        all(is.na(rawhtmlascharacter)) ||
+        all(!nzchar(trimws(rawhtmlascharacter)))) {
+        stop("Input is NA or empty")
+    }
+
+    # Use only the first non-NA element
+    rawhtmlascharacter <- rawhtmlascharacter[!is.na(rawhtmlascharacter)][1]
+
     haystackpart <-
         rawhtmlascharacter %>%
         stringr::str_split('"snapshot":') %>%
         purrr::pluck(1) %>%
         purrr::pluck(2)
+
+    # Guard against failed split (no "snapshot": key found)
+    if (is.null(haystackpart) || is.na(haystackpart) || !nzchar(haystackpart)) {
+        stop("No '\"snapshot\":' key found in script tag")
+    }
 
     # Detect the position of the snapshot json entry
     detection <-
@@ -66,12 +87,22 @@ detectmysnap <- function(rawhtmlascharacter) {
             perl = T
         )
 
+    # Guard against no JSON object found
+    if (detection[1] == -1) {
+        stop("Could not extract JSON object after 'snapshot'")
+    }
+
     # Extract the json that follows snapshot (without then name, 'snapshot')
-    haystackpart %>%
+    json_str <- haystackpart %>%
         stringr::str_sub(detection[1], detection[1] + attr(detection, "match.length") - 1) %>%
-        stringr::str_remove('"snapshot":') %>%
-        jsonlite::fromJSON() %>%
-        return()
+        stringr::str_remove('"snapshot":')
+
+    # Final guard before parsing
+    if (is.na(json_str) || !nzchar(trimws(json_str))) {
+        stop("Extracted JSON string is empty or NA")
+    }
+
+    jsonlite::fromJSON(json_str)
 }
 
 
@@ -96,22 +127,47 @@ stupid_conversion <- function(x) {
 #   unnest_wider(data)
 
 
-#' Get ad snapshots from Facebook ad library
+#' Get ad snapshots from Facebook Ad Library
 #'
-#' Retrieves snapshot data for a Facebook ad from the Ad Library.
-#' This function uses headless Chrome (via chromote) to bypass Facebook's
-#' JavaScript-based bot detection.
+#' Retrieves snapshot data (images, videos, cards, body text, etc.) for a
+#' Facebook ad from the Ad Library. Uses headless Chrome via chromote to
+#' bypass Facebook's JavaScript-based bot detection.
 #'
-#' @param ad_id A character string specifying the ad ID.
-#' @param download Logical, whether to download media files.
-#' @param mediadir Directory to save media files.
-#' @param hashing Logical, whether to hash the files. RECOMMENDED!
-#' @param wait_sec Seconds to wait for page to load (default 4). Increase if
-#'   you're getting empty results.
-#' @return A tibble with ad details.
+#' For best results when processing multiple ads, call
+#' `browser_session_start()` before and `browser_session_close()` after.
+#' If no persistent session exists, a temporary one is created and warmed
+#' up automatically (adds ~10 seconds on the first call).
+#'
+#' Includes built-in retry logic: if the page loads but snapshot data is
+#' not yet available (e.g., JS challenge still completing), the function
+#' retries with a longer wait before giving up.
+#'
+#' @param ad_id Character string. The Facebook ad ID.
+#' @param download Logical. If TRUE, download media files to `mediadir`.
+#' @param mediadir Character. Directory to save downloaded media files.
+#' @param hashing Logical. If TRUE, hash downloaded files for deduplication.
+#'   Recommended for large-scale data collection.
+#' @param wait_sec Numeric. Seconds to wait for the page to load (default 6).
+#'   Increase if you are getting empty results.
+#' @param max_retries Integer. Number of retry attempts if data is not found
+#'   on the first try (default 1). Each retry waits progressively longer.
+#' @return A tibble with one row containing ad snapshot fields (images,
+#'   videos, body, title, display_format, page_name, etc.) and the ad ID.
+#'   If retrieval fails, returns a single-column tibble with just the id.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Single ad
+#' snap <- get_ad_snapshots("1536277920797773")
+#'
+#' # Batch processing (recommended)
+#' browser_session_start()
+#' results <- map_dfr_progress(ad_ids, ~get_ad_snapshots(.x))
+#' browser_session_close()
+#' }
 get_ad_snapshots <- function(ad_id, download = FALSE, mediadir = "data/media",
-                              hashing = FALSE, wait_sec = 4) {
+                              hashing = FALSE, wait_sec = 6, max_retries = 1) {
 
     if (!requireNamespace("chromote", quietly = TRUE)) {
         stop("Package 'chromote' is required. Install with: install.packages('chromote')")
@@ -127,38 +183,102 @@ get_ad_snapshots <- function(ad_id, download = FALSE, mediadir = "data/media",
     } else {
         b <- chromote::ChromoteSession$new()
         close_on_exit <- TRUE
+
+        # Warm up fresh session: navigate to FB Ad Library landing page first
+        # so the JS challenge completes and cookies are set
+        tryCatch({
+            b$Page$navigate("https://www.facebook.com/ads/library/")
+            Sys.sleep(wait_sec + 2)
+        }, error = function(e) {
+            # Warm-up failed, continue anyway
+        })
     }
 
     if (close_on_exit) {
         on.exit(b$close(), add = TRUE)
     }
 
-    # Navigate and wait for JS challenge to complete
-    b$Page$navigate(url)
-    Sys.sleep(wait_sec)
+    # Fetch page HTML with retry logic
+    html_content <- NULL
+    attempts <- 0
 
-    # Get page HTML after JS execution
+    while (attempts <= max_retries) {
+        attempts <- attempts + 1
 
-    result <- b$Runtime$evaluate("document.documentElement.outerHTML")
-    html_content <- result$result$value
+        # Navigate to the ad page
+        nav_ok <- tryCatch({
+            b$Page$navigate(url)
+            TRUE
+        }, error = function(e) {
+            warning("Browser navigation failed for ad ID: ", ad_id,
+                    " - ", e$message,
+                    "\nThe Chrome process may have crashed. ",
+                    "Try: browser_session_close() then browser_session_start()")
+            FALSE
+        })
 
-    # Check if we got the actual page content
-    if (!grepl("snapshot", html_content)) {
-        if (grepl("__rd_verify_", html_content)) {
-            warning("Facebook JS challenge not completed. Try increasing wait_sec parameter.")
+        if (!nav_ok) {
+            return(tibble::tibble(id = ad_id))
         }
-        warning("No snapshot data found for ad ID: ", ad_id)
+
+        # Wait longer on retries
+        current_wait <- if (attempts == 1) wait_sec else wait_sec + (attempts * 2)
+        Sys.sleep(current_wait)
+
+        # Get page HTML after JS execution
+        result <- tryCatch({
+            b$Runtime$evaluate("document.documentElement.outerHTML")
+        }, error = function(e) {
+            warning("Browser evaluation failed for ad ID: ", ad_id,
+                    " - ", e$message,
+                    "\nThe Chrome process may have crashed. ",
+                    "Try: browser_session_close() then browser_session_start()")
+            NULL
+        })
+
+        if (is.null(result)) {
+            return(tibble::tibble(id = ad_id))
+        }
+
+        html_content <- result$result$value
+
+        # Validate html_content
+        if (is.null(html_content) || is.na(html_content) || !nzchar(html_content)) {
+            if (attempts <= max_retries) next
+            warning("Empty or invalid page content for ad ID: ", ad_id)
+            return(tibble::tibble(id = ad_id))
+        }
+
+        # Check if we got the actual snapshot data
+        if (grepl('"snapshot":', html_content, fixed = TRUE)) {
+            break  # Success — data found
+        }
+
+        # Not found yet — retry or give up
+        if (attempts <= max_retries) {
+            # Retry
+            next
+        }
+
+        # Final failure
+        if (grepl("__rd_verify_", html_content)) {
+            warning("Facebook JS challenge not completed for ad ID: ", ad_id,
+                    ". Try increasing wait_sec or use browser_session_start().")
+        } else {
+            warning("No snapshot data found for ad ID: ", ad_id)
+        }
         return(tibble::tibble(id = ad_id))
     }
 
     # Extract snapshot from script tags
+    # Use specific pattern '"snapshot":' to avoid false positives like "ads/reporting/snapshot"
     script_seg <- html_content %>%
         rvest::read_html() %>%
         rvest::html_nodes("script") %>%
         as.character() %>%
-        .[stringr::str_detect(., "snapshot")]
+        .[stringr::str_detect(., '"snapshot":')]
 
-    if (length(script_seg) == 0) {
+    if (length(script_seg) == 0 || all(is.na(script_seg))) {
         warning("No snapshot script tag found for ad ID: ", ad_id)
         return(tibble::tibble(id = ad_id))
     }

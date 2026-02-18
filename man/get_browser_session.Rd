@@ -11,6 +11,8 @@ A chromote session object or NULL.
 }
 \description{
 Returns the active browser session, or NULL if none is active.
-This is used internally by other functions.
+If a session was previously started but Chrome has crashed, this
+will detect the crash (via \code{browser_session_active()}) and return NULL
+so a fresh session is created by the caller.
 }
 \keyword{internal}

@@ -7,10 +7,13 @@
 browser_session_active()
 }
 \value{
-Logical, TRUE if a session is active.
+Logical, TRUE if a session is active and responsive.
 }
 \description{
-Check if a persistent browser session is active
+Verifies both the R-side flag and that Chrome is actually responsive
+by sending a lightweight evaluation to the browser. If Chrome has
+crashed or the websocket connection has been lost, the stale session
+is automatically cleaned up and FALSE is returned.
 }
 \examples{
 \dontrun{

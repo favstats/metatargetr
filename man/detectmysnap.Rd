@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_media.R
 \name{detectmysnap}
 \alias{detectmysnap}
-\title{Updated function to detect the JSON code on Facebook ad websites}
+\title{Detect and parse the snapshot JSON from a Facebook Ad Library script tag}
 \usage{
 detectmysnap(rawhtmlascharacter)
 }
@@ -10,8 +10,14 @@ detectmysnap(rawhtmlascharacter)
 \item{rawhtmlascharacter}{Raw HTML content as character string.}
 }
 \value{
-A parsed JSON object.
+A parsed JSON object (list).
 }
 \description{
-Updated function to detect the JSON code on Facebook ad websites
+Splits the raw HTML on \verb{"snapshot":}, extracts the first JSON object
+using a recursive regex, and parses it with \code{jsonlite::fromJSON()}.
+Includes input validation at each step to produce clear error messages
+instead of cryptic JSON parse failures.
+}
+\seealso{
+\code{\link[=get_ad_snapshots]{get_ad_snapshots()}} which calls this function internally.
 }

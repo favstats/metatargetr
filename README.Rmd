@@ -39,19 +39,24 @@ If `metatargetr` has been helpful to you, consider [supporting the project](http
 
 ## Table of Contents
 
-- 🚀 [Installation](#installation)  
-- 📦 [Load in Package](#load-in-package)  
-- 🎯 [Get Targeting Criteria](#get-targeting-criteria)  
-  - ⏳ [Last 30 Days](#get-targeting-criteria-last-30-days)  
-  - 🗓️ [Last 7 Days](#get-targeting-criteria-last-7-days)  
-- 🕰️ [Retrieve Historical Targeting Data](#retrieve-historical-targeting-data-from-database)  
-- 🗂️ [Retrieve Historical Report Data](#retrieve-historical-report-data-from-the-database)  
-- ℹ️ [Get Page Info](#get-page-info)  
-- 🔍 [Retrieve Targeting Metadata](#retrieve-targeting-metadata)  
-- 🖼️ [Get Images and Videos](#get-images-and-videos)  
-- 📊 [Google Transparency Report](#google-transparency-report)  
-  - 💰 [Retrieve Aggregated Spending Data](#retrieve-aggregated-spending-data)  
-  - 📈 [Retrieve Time-Based Spending Data](#retrieve-time-based-spending-data)  
+- 🚀 [Installation](#installation)
+- 📦 [Load in Package](#load-in-package)
+- 🎯 [Get Targeting Criteria](#get-targeting-criteria-last-30-days)
+  - ⏳ [Last 30 Days](#get-targeting-criteria-last-30-days)
+  - 🗓️ [Last 7 Days](#get-targeting-criteria-last-7-days)
+- 🕰️ [Retrieve Historical Targeting Data](#retrieve-historical-targeting-data-from-database)
+- 🗂️ [Retrieve Historical Report Data](#retrieve-historical-report-data-from-the-database)
+- ℹ️ [Get Page Info](#get-page-info)
+- 🔍 [Retrieve Targeting Metadata](#retrieve-targeting-metadata)
+- 🖼️ [Get Ad Snapshots (Images, Videos, and Metadata)](#get-ad-snapshots-images-videos-and-metadata)
+  - [Single ad](#single-ad)
+  - [Batch processing](#batch-processing-recommended-for-multiple-ads)
+  - [Download media files](#download-media-files)
+- 📄 [Fetch and Cache Ad HTML](#fetch-and-cache-ad-html)
+- 🔗 [Get Deeplink Data](#get-deeplink-data)
+- 📊 [Google Transparency Report](#google-transparency-report)
+  - 💰 [Retrieve Aggregated Spending Data](#retrieve-aggregated-spending-data)
+  - 📈 [Retrieve Time-Based Spending Data](#retrieve-time-based-spending-data)
 - ✍️ [Citing metatargetr](#citing-metatargetr)
 
 ---
@@ -174,18 +179,57 @@ print(metadata)
 ```
 
 
-## Get Images and Videos
+## Get Ad Snapshots (Images, Videos, and Metadata)
 
-The following code downloads the images and videos of a Meta ad. It also retrieves additional info not present in the Meta Ad Library API (e.g. `page_like_count` `cta_type` i.e. call to action button). Just put in the right Ad Archive ID.
-
-It automatically handles duplicate images and videos (of which there are many) by hashing the images and videos and making sure they are not saved twice.
+`get_ad_snapshots()` retrieves snapshot data for a Facebook ad from the Ad Library, including images, videos, cards, body text, page info, and more. It uses headless Chrome (via chromote) to bypass Facebook's JavaScript-based bot detection.
 
 This piece of code was created in collaboration with [Philipp Mendoza](https://www.uva.nl/en/profile/m/e/p.m.mendoza/p.m.mendoza.html).
 
-```{r}
+### Single ad
 
-get_ad_snapshots("561403598962843", download = T, hashing = T, mediadir = "data/media")
+```{r, eval = FALSE}
+snap <- get_ad_snapshots("561403598962843")
+```
 
+### Batch processing (recommended for multiple ads)
+
+For best performance when processing multiple ads, use a persistent browser session. This passes Facebook's JS challenge once during startup, so all subsequent calls are fast.
+
+```{r, eval = FALSE}
+browser_session_start()
+
+results <- map_dfr_progress(ad_ids, ~get_ad_snapshots(.x))
+
+browser_session_close()
+```
+
+If Chrome becomes unresponsive mid-batch, use `browser_session_restart()` to recover without restarting R.
+
+### Download media files
+
+Setting `download = TRUE` saves images and videos to disk. Use `hashing = TRUE` to deduplicate media files (recommended for large-scale collection).
+
+```{r, eval = FALSE}
+get_ad_snapshots("561403598962843", download = TRUE, hashing = TRUE, mediadir = "data/media")
+```
+
+## Fetch and Cache Ad HTML
+
+`get_ad_html()` fetches the raw HTML for one or more ads and caches results to disk as gzipped files. Useful for archiving or downstream parsing with `parse_ad_htmls()`.
+
+```{r, eval = FALSE}
+paths <- get_ad_html(
+  ad_ids  = c("561403598962843", "1103135646905363"),
+  country = "US"
+)
+```
+
+## Get Deeplink Data
+
+`get_deeplink()` extracts the full `deeplinkAdCard` JSON object from an ad page, which contains additional metadata beyond what `get_ad_snapshots()` returns (e.g., `fevInfo`, `free_form_additional_info`, `learn_more_content`).
+
+```{r, eval = FALSE}
+dl <- get_deeplink("561403598962843")
 ```
 
 ## Google Transparency Report
@@ -211,17 +255,17 @@ ggl_get_spending(advertiser_id = "AR18091944865565769729",
 Retrieve time-based spending data for the same advertiser and country. If `get_times` is set to `TRUE`, it returns a tibble with date-wise spending data.
 
 
-```{r}
+```{r, eval = FALSE}
 # Retrieve time-based spending data for the same advertiser and country
-timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729", 
-                                   start_date = "2023-10-24", 
-                                   end_date = "2023-11-22", 
-                                   cntry = "NL", 
+timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729",
+                                   start_date = "2023-10-24",
+                                   end_date = "2023-11-22",
+                                   cntry = "NL",
                                    get_times = T)
 
 # Plotting the time-series data
-timeseries_dat %>% 
-    ggplot2::ggplot(ggplot2::aes(date, spend)) +
+timeseries_dat %>%
+    ggplot2::ggplot(ggplot2::aes(x = date, y = spend)) +
     ggplot2::geom_col() +
     ggplot2::theme_minimal()
 ```
