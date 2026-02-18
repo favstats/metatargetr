@@ -39,18 +39,18 @@ including file names, sizes, timestamps, and tags.
 # Retrieve metadata for Germany for the last 30 days
 metadata <- get_targeting_metadata("DE", "30")
 print(metadata)
-#> # A tibble: 672 × 3
+#> # A tibble: 695 × 3
 #>    cntry ds         tframe      
 #>    <chr> <chr>      <chr>       
-#>  1 DE    2026-01-23 last_30_days
-#>  2 DE    2026-01-22 last_30_days
-#>  3 DE    2026-01-21 last_30_days
-#>  4 DE    2026-01-20 last_30_days
-#>  5 DE    2026-01-19 last_30_days
-#>  6 DE    2026-01-18 last_30_days
-#>  7 DE    2026-01-17 last_30_days
-#>  8 DE    2026-01-16 last_30_days
-#>  9 DE    2026-01-15 last_30_days
-#> 10 DE    2026-01-14 last_30_days
-#> # ℹ 662 more rows
+#>  1 DE    2026-02-15 last_30_days
+#>  2 DE    2026-02-14 last_30_days
+#>  3 DE    2026-02-13 last_30_days
+#>  4 DE    2026-02-12 last_30_days
+#>  5 DE    2026-02-11 last_30_days
+#>  6 DE    2026-02-10 last_30_days
+#>  7 DE    2026-02-09 last_30_days
+#>  8 DE    2026-02-08 last_30_days
+#>  9 DE    2026-02-07 last_30_days
+#> 10 DE    2026-02-06 last_30_days
+#> # ℹ 685 more rows
 ```

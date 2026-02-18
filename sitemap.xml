@@ -10,10 +10,12 @@
 <url><loc>/articles/retrieving-targeting-data.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
 <url><loc>/reference/aggr_targeting.html</loc></url>
 <url><loc>/reference/browser_close.html</loc></url>
 <url><loc>/reference/browser_session_active.html</loc></url>
 <url><loc>/reference/browser_session_close.html</loc></url>
+<url><loc>/reference/browser_session_restart.html</loc></url>
 <url><loc>/reference/browser_session_start.html</loc></url>
 <url><loc>/reference/check_hash.html</loc></url>
 <url><loc>/reference/create_necessary_dirs.html</loc></url>

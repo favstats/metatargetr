@@ -10,13 +10,15 @@
   persistent browser session is active
 - [`browser_session_close()`](browser_session_close.md) : Close the
   persistent browser session
+- [`browser_session_restart()`](browser_session_restart.md) : Restart
+  the persistent browser session
 - [`browser_session_start()`](browser_session_start.md) : Start a
   persistent browser session
 - [`check_hash()`](check_hash.md) : Check hash of a media file
 - [`create_necessary_dirs()`](create_necessary_dirs.md) : Create
   necessary directories
-- [`detectmysnap()`](detectmysnap.md) : Updated function to detect the
-  JSON code on Facebook ad websites
+- [`detectmysnap()`](detectmysnap.md) : Detect and parse the snapshot
+  JSON from a Facebook Ad Library script tag
 - [`detectmysnap_dep()`](detectmysnap_dep.md) : Detect the JSON code on
   Facebook ad websites
 - [`download_media()`](download_media.md) : Download media files and
@@ -34,7 +36,7 @@
 - [`get_ad_report()`](get_ad_report.md) : Get Facebook Ad Library Report
   Data
 - [`get_ad_snapshots()`](get_ad_snapshots.md) : Get ad snapshots from
-  Facebook ad library
+  Facebook Ad Library
 - [`get_additional_page_info_db()`](get_additional_page_info_db.md) :
   Get Page Info Dataset for a Specific Country
 - [`get_ads_info()`](get_ads_info.md) : Get and Parse Ad Library Data

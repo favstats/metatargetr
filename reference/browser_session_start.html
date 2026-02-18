@@ -11,7 +11,7 @@ browser_session_close() is called."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">metatargetr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,6 +21,7 @@ browser_session_close() is called."></head><body>
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/favstats/metatargetr" aria-label="GitHub"><span class="fa fa-github"></span></a></li>
@@ -51,9 +52,22 @@ browser_session_close() is called."></head><body>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">browser_session_start</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">browser_session_start</span><span class="op">(</span>warm_up <span class="op">=</span> <span class="cn">TRUE</span>, warm_up_wait <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+
+
+<dl><dt id="arg-warm-up">warm_up<a class="anchor" aria-label="anchor" href="#arg-warm-up"></a></dt>
+<dd><p>Logical. If TRUE (default), navigates to the Facebook Ad
+Library landing page on startup to pass the JS challenge and set cookies.</p></dd>
+
+
+<dt id="arg-warm-up-wait">warm_up_wait<a class="anchor" aria-label="anchor" href="#arg-warm-up-wait"></a></dt>
+<dd><p>Seconds to wait during warm-up (default 8).</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Invisibly returns TRUE on success.</p>
@@ -61,19 +75,20 @@ browser_session_close() is called."></head><body>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This significantly improves performance when processing multiple ads,
-as browser startup (~2-3 seconds) only happens once.</p>
+as browser startup (~2–3 seconds) only happens once. By default the
+session is warmed up by navigating to the Facebook Ad Library landing
+page, which passes the JS challenge and sets cookies so that subsequent
+calls return data immediately.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Start session</span></span></span>
+<span class="r-in"><span><span class="co"># Start session (includes warm-up)</span></span></span>
 <span class="r-in"><span><span class="fu">browser_session_start</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Process multiple ads (each reuses the session)</span></span></span>
-<span class="r-in"><span><span class="va">result1</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="st">"1103135646905363"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="st">"561403598962843"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">result3</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="st">"711082744873817"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="map_dfr_progress.html">map_dfr_progress</a></span><span class="op">(</span><span class="va">ad_ids</span>, <span class="op">~</span><span class="fu"><a href="get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Close when done</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="browser_session_close.html">browser_session_close</a></span><span class="op">(</span><span class="op">)</span></span></span>

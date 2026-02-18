@@ -21,23 +21,29 @@ Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoj
 
 ## Table of Contents
 
-- 🚀 [Installation](#installation)  
-- 📦 [Load in Package](#load-in-package)  
-- 🎯 [Get Targeting Criteria](#get-targeting-criteria)
-  - ⏳ [Last 30 Days](#get-targeting-criteria-last-30-days)  
-  - 🗓️ [Last 7 Days](#get-targeting-criteria-last-7-days)  
+- 🚀 [Installation](#installation)
+- 📦 [Load in Package](#load-in-package)
+- 🎯 [Get Targeting Criteria](#get-targeting-criteria-last-30-days)
+  - ⏳ [Last 30 Days](#get-targeting-criteria-last-30-days)
+  - 🗓️ [Last 7 Days](#get-targeting-criteria-last-7-days)
 - 🕰️ [Retrieve Historical Targeting
-  Data](#retrieve-historical-targeting-data-from-database)  
+  Data](#retrieve-historical-targeting-data-from-database)
 - 🗂️ [Retrieve Historical Report
-  Data](#retrieve-historical-report-data-from-the-database)  
-- ℹ️ [Get Page Info](#get-page-info)  
-- 🔍 [Retrieve Targeting Metadata](#retrieve-targeting-metadata)  
-- 🖼️ [Get Images and Videos](#get-images-and-videos)  
+  Data](#retrieve-historical-report-data-from-the-database)
+- ℹ️ [Get Page Info](#get-page-info)
+- 🔍 [Retrieve Targeting Metadata](#retrieve-targeting-metadata)
+- 🖼️ [Get Ad Snapshots (Images, Videos, and
+  Metadata)](#get-ad-snapshots-images-videos-and-metadata)
+  - [Single ad](#single-ad)
+  - [Batch processing](#batch-processing-recommended-for-multiple-ads)
+  - [Download media files](#download-media-files)
+- 📄 [Fetch and Cache Ad HTML](#fetch-and-cache-ad-html)
+- 🔗 [Get Deeplink Data](#get-deeplink-data)
 - 📊 [Google Transparency Report](#google-transparency-report)
   - 💰 [Retrieve Aggregated Spending
-    Data](#retrieve-aggregated-spending-data)  
+    Data](#retrieve-aggregated-spending-data)
   - 📈 [Retrieve Time-Based Spending
-    Data](#retrieve-time-based-spending-data)  
+    Data](#retrieve-time-based-spending-data)
 - ✍️ [Citing metatargetr](#citing-metatargetr)
 
 ------------------------------------------------------------------------
@@ -74,30 +80,10 @@ last30 <- get_targeting(id = "121264564551002",
                         timeframe = "LAST_30_DAYS")
 
 head(last30, 5)
-#>               value num_ads total_spend_pct     type location_type
-#> 1               All      44       1.0000000   gender          <NA>
-#> 2             Women       0       0.0000000   gender          <NA>
-#> 3               Men       0       0.0000000   gender          <NA>
-#> 4 5931, Netherlands       7       0.1598496 location          zips
-#> 5 9461, Netherlands       7       0.1598496 location          zips
-#>   num_obfuscated is_exclusion custom_audience_type         ds main_currency
-#> 1             NA           NA                 <NA> 2024-12-26           EUR
-#> 2             NA           NA                 <NA> 2024-12-26           EUR
-#> 3             NA           NA                 <NA> 2024-12-26           EUR
-#> 4              0        FALSE                 <NA> 2024-12-26           EUR
-#> 5              0        FALSE                 <NA> 2024-12-26           EUR
-#>   total_num_ads total_spend_formatted is_30_day_available is_90_day_available
-#> 1            44                €7,606                TRUE                TRUE
-#> 2            44                €7,606                TRUE                TRUE
-#> 3            44                €7,606                TRUE                TRUE
-#> 4            44                €7,606                TRUE                TRUE
-#> 5            44                €7,606                TRUE                TRUE
-#>           page_id
-#> 1 121264564551002
-#> 2 121264564551002
-#> 3 121264564551002
-#> 4 121264564551002
-#> 5 121264564551002
+#> # A tibble: 0 × 7
+#> # ℹ 7 variables: ds <chr>, main_currency <chr>, total_num_ads <int>,
+#> #   total_spend_formatted <chr>, is_30_day_available <lgl>,
+#> #   is_90_day_available <lgl>, page_id <chr>
 ```
 
 ## Get Targeting Criteria (Last 7 Days)
@@ -128,8 +114,8 @@ can use the function below to retrieve it.
 
 > Be aware: sometimes the scrapers do not work so it is possible that
 > some pages are missing. You can use
-> [`retrieve_targeting_metadata`](#retrieve-targeting-metadata) function
-> to check which data for which country and day is present.
+> [`get_targeting_metadata`](#get-targeting-metadata) function to check
+> which data for which country and day is present.
 
 ``` r
 # # set some parameters
@@ -215,24 +201,24 @@ str(page_info)
 #>  $ page_verification     : chr "BLUE_VERIFIED"
 #>  $ entity_type           : chr "PERSON_PROFILE"
 #>  $ page_alias            : chr "VVD"
-#>  $ likes                 : chr "108137"
+#>  $ likes                 : chr "109676"
 #>  $ page_category         : chr "Political party"
 #>  $ ig_verification       : chr "TRUE"
 #>  $ ig_username           : chr "vvd"
-#>  $ ig_followers          : chr "42137"
+#>  $ ig_followers          : chr "54188"
 #>  $ shared_disclaimer_info: chr "[]"
-#>  $ about                 : chr "Doe mee en word lid van de VVD! 💙🧡 "
+#>  $ about                 : chr "Een sterk en veilig Nederland. Met rust in je portemonnee en alle ruimte voor jou om te groeien en iets op te b"| __truncated__
 #>  $ event                 : chr "CREATION: 2010-04-23 21:05:02"
 #>  $ no_address            : logi TRUE
 ```
 
-## `retrieve_targeting_metadata()`
+## `get_targeting_metadata()`
 
-The `retrieve_targeting_metadata` function is designed to retrieve
-metadata about targeting data releases from a GitHub repository to see
-which data is present (or not). It extracts and organizes information
-such as file names, sizes, timestamps, and tags for a specified country
-and timeframe. **This metadata provides an overview of the available
+The `get_targeting_metadata` function is designed to retrieve metadata
+about targeting data releases from a GitHub repository to see which data
+is present (or not). It extracts and organizes information such as file
+names, sizes, timestamps, and tags for a specified country and
+timeframe. **This metadata provides an overview of the available
 targeting data without downloading the actual files.**
 
 - `country_code` (*Character*):  
@@ -253,53 +239,92 @@ targeting data without downloading the actual files.**
 ``` r
 
 # Retrieve metadata for Germany for the last 30 days
-metadata <- retrieve_targeting_metadata("DE", "30")
+metadata <- get_targeting_metadata("DE", "30")
 
 print(metadata)
-#> # A tibble: 314 × 3
+#> # A tibble: 695 × 3
 #>    cntry ds         tframe      
 #>    <chr> <chr>      <chr>       
-#>  1 DE    2024-12-26 last_30_days
-#>  2 DE    2024-12-25 last_30_days
-#>  3 DE    2024-12-24 last_30_days
-#>  4 DE    2024-12-23 last_30_days
-#>  5 DE    2024-12-22 last_30_days
-#>  6 DE    2024-12-21 last_30_days
-#>  7 DE    2024-12-20 last_30_days
-#>  8 DE    2024-12-19 last_30_days
-#>  9 DE    2024-12-18 last_30_days
-#> 10 DE    2024-12-17 last_30_days
-#> # ℹ 304 more rows
+#>  1 DE    2026-02-15 last_30_days
+#>  2 DE    2026-02-14 last_30_days
+#>  3 DE    2026-02-13 last_30_days
+#>  4 DE    2026-02-12 last_30_days
+#>  5 DE    2026-02-11 last_30_days
+#>  6 DE    2026-02-10 last_30_days
+#>  7 DE    2026-02-09 last_30_days
+#>  8 DE    2026-02-08 last_30_days
+#>  9 DE    2026-02-07 last_30_days
+#> 10 DE    2026-02-06 last_30_days
+#> # ℹ 685 more rows
 ```
 
-## Get Images and Videos
+## Get Ad Snapshots (Images, Videos, and Metadata)
 
-The following code downloads the images and videos of a Meta ad. It also
-retrieves additional info not present in the Meta Ad Library API
-(e.g. `page_like_count` `cta_type` i.e. call to action button). Just put
-in the right Ad Archive ID.
-
-It automatically handles duplicate images and videos (of which there are
-many) by hashing the images and videos and making sure they are not
-saved twice.
+[`get_ad_snapshots()`](reference/get_ad_snapshots.md) retrieves snapshot
+data for a Facebook ad from the Ad Library, including images, videos,
+cards, body text, page info, and more. It uses headless Chrome (via
+chromote) to bypass Facebook’s JavaScript-based bot detection.
 
 This piece of code was created in collaboration with [Philipp
 Mendoza](https://www.uva.nl/en/profile/m/e/p.m.mendoza/p.m.mendoza.html).
 
-``` r
+### Single ad
 
-get_ad_snapshots("561403598962843", download = T, hashing = T, mediadir = "data/media")
-#> # A tibble: 1 × 52
-#>   name  ad_creative_id cards         body_translations byline caption   cta_text
-#>   <chr>          <dbl> <list>        <lgl>             <lgl>  <chr>     <lgl>   
-#> 1 f      6269946734162 <df [2 × 16]> NA                NA     worldmil… NA      
-#> # ℹ 45 more variables: dynamic_item_flags <lgl>, dynamic_versions <lgl>,
-#> #   edited_snapshots <lgl>, effective_authorization_category <chr>,
-#> #   event <lgl>, extra_images <lgl>, extra_links <lgl>, extra_texts <lgl>,
-#> #   extra_videos <lgl>, instagram_shopping_products <lgl>,
-#> #   display_format <chr>, title <chr>, link_description <chr>, link_url <chr>,
-#> #   page_welcome_message <lgl>, images <lgl>, videos <lgl>,
-#> #   creation_time <int>, page_id <dbl>, page_name <chr>, …
+``` r
+snap <- get_ad_snapshots("561403598962843")
+```
+
+### Batch processing (recommended for multiple ads)
+
+For best performance when processing multiple ads, use a persistent
+browser session. This passes Facebook’s JS challenge once during
+startup, so all subsequent calls are fast.
+
+``` r
+browser_session_start()
+
+results <- map_dfr_progress(ad_ids, ~get_ad_snapshots(.x))
+
+browser_session_close()
+```
+
+If Chrome becomes unresponsive mid-batch, use
+[`browser_session_restart()`](reference/browser_session_restart.md) to
+recover without restarting R.
+
+### Download media files
+
+Setting `download = TRUE` saves images and videos to disk. Use
+`hashing = TRUE` to deduplicate media files (recommended for large-scale
+collection).
+
+``` r
+get_ad_snapshots("561403598962843", download = TRUE, hashing = TRUE, mediadir = "data/media")
+```
+
+## Fetch and Cache Ad HTML
+
+[`get_ad_html()`](reference/get_ad_html.md) fetches the raw HTML for one
+or more ads and caches results to disk as gzipped files. Useful for
+archiving or downstream parsing with `parse_ad_htmls()`.
+
+``` r
+paths <- get_ad_html(
+  ad_ids  = c("561403598962843", "1103135646905363"),
+  country = "US"
+)
+```
+
+## Get Deeplink Data
+
+[`get_deeplink()`](reference/get_deeplink.md) extracts the full
+`deeplinkAdCard` JSON object from an ad page, which contains additional
+metadata beyond what
+[`get_ad_snapshots()`](reference/get_ad_snapshots.md) returns (e.g.,
+`fevInfo`, `free_form_additional_info`, `learn_more_content`).
+
+``` r
+dl <- get_deeplink("561403598962843")
 ```
 
 ## Google Transparency Report
@@ -325,13 +350,10 @@ ggl_get_spending(advertiser_id = "AR18091944865565769729",
                  start_date = "2023-10-24", 
                  end_date = "2023-11-22",
                  cntry = "NL")
-#> # A tibble: 1 × 18
-#>   currency spend number_of_ads text_ad_perc text_ad_spend text_type vid_ad_perc
-#>   <chr>    <chr> <chr>                <dbl>         <dbl>     <int>       <dbl>
-#> 1 EUR      56050 160                  0.319         0.521         3       0.681
-#> # ℹ 11 more variables: vid_ad_spend <dbl>, vid_type <int>, metric <int>,
-#> #   advertiser_id <chr>, advertiser_name <chr>, cntry <chr>, unk1 <int>,
-#> #   unk2 <int>, unk3 <int>, unk4 <chr>, unk5 <chr>
+#> # A tibble: 1 × 2
+#>   spend number_of_ads
+#>   <dbl>         <dbl>
+#> 1     0             0
 ```
 
 ### Retrieve Time-Based Spending Data
@@ -342,20 +364,18 @@ spending data.
 
 ``` r
 # Retrieve time-based spending data for the same advertiser and country
-timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729", 
-                                   start_date = "2023-10-24", 
-                                   end_date = "2023-11-22", 
-                                   cntry = "NL", 
+timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729",
+                                   start_date = "2023-10-24",
+                                   end_date = "2023-11-22",
+                                   cntry = "NL",
                                    get_times = T)
 
 # Plotting the time-series data
-timeseries_dat %>% 
-    ggplot2::ggplot(ggplot2::aes(date, spend)) +
+timeseries_dat %>%
+    ggplot2::ggplot(ggplot2::aes(x = date, y = spend)) +
     ggplot2::geom_col() +
     ggplot2::theme_minimal()
 ```
-
-![](reference/figures/README-unnamed-chunk-10-1.png)
 
 ------------------------------------------------------------------------
 
@@ -412,13 +432,15 @@ Thank you for your collaboration!
   persistent browser session is active
 - [`browser_session_close()`](browser_session_close.md) : Close the
   persistent browser session
+- [`browser_session_restart()`](browser_session_restart.md) : Restart
+  the persistent browser session
 - [`browser_session_start()`](browser_session_start.md) : Start a
   persistent browser session
 - [`check_hash()`](check_hash.md) : Check hash of a media file
 - [`create_necessary_dirs()`](create_necessary_dirs.md) : Create
   necessary directories
-- [`detectmysnap()`](detectmysnap.md) : Updated function to detect the
-  JSON code on Facebook ad websites
+- [`detectmysnap()`](detectmysnap.md) : Detect and parse the snapshot
+  JSON from a Facebook Ad Library script tag
 - [`detectmysnap_dep()`](detectmysnap_dep.md) : Detect the JSON code on
   Facebook ad websites
 - [`download_media()`](download_media.md) : Download media files and
@@ -436,7 +458,7 @@ Thank you for your collaboration!
 - [`get_ad_report()`](get_ad_report.md) : Get Facebook Ad Library Report
   Data
 - [`get_ad_snapshots()`](get_ad_snapshots.md) : Get ad snapshots from
-  Facebook ad library
+  Facebook Ad Library
 - [`get_additional_page_info_db()`](get_additional_page_info_db.md) :
   Get Page Info Dataset for a Specific Country
 - [`get_ads_info()`](get_ads_info.md) : Get and Parse Ad Library Data

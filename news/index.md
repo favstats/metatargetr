@@ -1,0 +1,77 @@
+# Changelog
+
+## metatargetr 0.0.6
+
+### Bug fixes
+
+- Fixed [`get_ad_snapshots()`](../reference/get_ad_snapshots.md) failing
+  with “lexical error: invalid char in json text” when Facebook’s page
+  structure includes unrelated script tags containing the word
+  “snapshot” (e.g., “ads/reporting/snapshot”). The script tag filter now
+  matches on `"snapshot":` (the JSON key) instead of bare `snapshot`,
+  avoiding false positives
+  ([\#1](https://github.com/favstats/metatargetr/issues/1)).
+
+- Fixed [`detectmysnap()`](../reference/detectmysnap.md) passing NA to
+  [`jsonlite::fromJSON()`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+  when the wrong script tag was selected. Added input validation at
+  every step (NA/NULL/empty checks, split result check, regex match
+  check, pre-parse check) so failures produce clear error messages
+  instead of cryptic JSON parse errors.
+
+- Fixed
+  [`browser_session_active()`](../reference/browser_session_active.md)
+  only checking R-side flags without verifying that Chrome is actually
+  responsive. It now pings the browser with a lightweight evaluation. If
+  Chrome has crashed (“Reconnecting to chrome process”), the stale
+  session is automatically cleaned up so callers create a fresh one
+  instead of reusing a dead session.
+
+- Fixed
+  [`browser_session_close()`](../reference/browser_session_close.md)
+  failing to clean up R-side state when Chrome had already crashed,
+  which could leave the session in a broken state where
+  [`browser_session_start()`](../reference/browser_session_start.md)
+  would not work without restarting R.
+
+### New features
+
+- [`browser_session_start()`](../reference/browser_session_start.md) now
+  warms up the session by navigating to the Facebook Ad Library landing
+  page on startup. This passes the JS challenge and sets cookies so that
+  subsequent [`get_ad_snapshots()`](../reference/get_ad_snapshots.md)
+  calls return data immediately. Controlled via `warm_up` (default TRUE)
+  and `warm_up_wait` (default 8 seconds) parameters.
+
+- [`get_ad_snapshots()`](../reference/get_ad_snapshots.md) now includes
+  automatic warm-up for temporary (non- persistent) sessions. When no
+  persistent session is active, a fresh session navigates to the Ad
+  Library landing page before fetching the actual ad, ensuring the JS
+  challenge is passed.
+
+- [`get_ad_snapshots()`](../reference/get_ad_snapshots.md) now includes
+  retry logic via the `max_retries` parameter (default 1). If the page
+  loads but snapshot data is not yet available, the function retries
+  with a progressively longer wait before giving up.
+
+- [`get_ad_snapshots()`](../reference/get_ad_snapshots.md) default
+  `wait_sec` increased from 4 to 6 seconds for better reliability with
+  Facebook’s current page load times.
+
+- New
+  [`browser_session_restart()`](../reference/browser_session_restart.md)
+  function for convenience when Chrome becomes unresponsive mid-batch.
+  Equivalent to calling
+  [`browser_session_close()`](../reference/browser_session_close.md)
+  then
+  [`browser_session_start()`](../reference/browser_session_start.md).
+
+- [`get_ad_snapshots()`](../reference/get_ad_snapshots.md) now wraps
+  chromote navigation and evaluation calls in tryCatch, producing
+  actionable warnings (suggesting
+  [`browser_session_restart()`](../reference/browser_session_restart.md))
+  instead of unhandled errors when Chrome crashes.
+
+## metatargetr 0.0.5
+
+- Initial tracked release.

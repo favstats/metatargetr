@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">metatargetr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="articles/index.html">Articles</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -74,33 +75,42 @@
 <h2 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
 </h2>
 <ul>
-<li>🚀 <a href="#installation">Installation</a><br>
+<li>🚀 <a href="#installation">Installation</a>
 </li>
-<li>📦 <a href="#load-in-package">Load in Package</a><br>
+<li>📦 <a href="#load-in-package">Load in Package</a>
 </li>
-<li>🎯 <a href="#get-targeting-criteria">Get Targeting Criteria</a>
+<li>🎯 <a href="#get-targeting-criteria-last-30-days">Get Targeting Criteria</a>
 <ul>
-<li>⏳ <a href="#get-targeting-criteria-last-30-days">Last 30 Days</a><br>
+<li>⏳ <a href="#get-targeting-criteria-last-30-days">Last 30 Days</a>
 </li>
-<li>🗓️ <a href="#get-targeting-criteria-last-7-days">Last 7 Days</a><br>
+<li>🗓️ <a href="#get-targeting-criteria-last-7-days">Last 7 Days</a>
 </li>
 </ul>
 </li>
-<li>🕰️ <a href="#retrieve-historical-targeting-data-from-database">Retrieve Historical Targeting Data</a><br>
+<li>🕰️ <a href="#retrieve-historical-targeting-data-from-database">Retrieve Historical Targeting Data</a>
 </li>
-<li>🗂️ <a href="#retrieve-historical-report-data-from-the-database">Retrieve Historical Report Data</a><br>
+<li>🗂️ <a href="#retrieve-historical-report-data-from-the-database">Retrieve Historical Report Data</a>
 </li>
-<li>ℹ️ <a href="#get-page-info">Get Page Info</a><br>
+<li>ℹ️ <a href="#get-page-info">Get Page Info</a>
 </li>
-<li>🔍 <a href="#retrieve-targeting-metadata">Retrieve Targeting Metadata</a><br>
+<li>🔍 <a href="#retrieve-targeting-metadata">Retrieve Targeting Metadata</a>
 </li>
-<li>🖼️ <a href="#get-images-and-videos">Get Images and Videos</a><br>
+<li>🖼️ <a href="#get-ad-snapshots-images-videos-and-metadata">Get Ad Snapshots (Images, Videos, and Metadata)</a>
+<ul>
+<li><a href="#single-ad">Single ad</a></li>
+<li><a href="#batch-processing-recommended-for-multiple-ads">Batch processing</a></li>
+<li><a href="#download-media-files">Download media files</a></li>
+</ul>
+</li>
+<li>📄 <a href="#fetch-and-cache-ad-html">Fetch and Cache Ad HTML</a>
+</li>
+<li>🔗 <a href="#get-deeplink-data">Get Deeplink Data</a>
 </li>
 <li>📊 <a href="#google-transparency-report">Google Transparency Report</a>
 <ul>
-<li>💰 <a href="#retrieve-aggregated-spending-data">Retrieve Aggregated Spending Data</a><br>
+<li>💰 <a href="#retrieve-aggregated-spending-data">Retrieve Aggregated Spending Data</a>
 </li>
-<li>📈 <a href="#retrieve-time-based-spending-data">Retrieve Time-Based Spending Data</a><br>
+<li>📈 <a href="#retrieve-time-based-spending-data">Retrieve Time-Based Spending Data</a>
 </li>
 </ul>
 </li>
@@ -133,30 +143,10 @@
 <span>                        timeframe <span class="op">=</span> <span class="st">"LAST_30_DAYS"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">last30</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               value num_ads total_spend_pct     type location_type</span></span>
-<span><span class="co">#&gt; 1               All      44       1.0000000   gender          &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2             Women       0       0.0000000   gender          &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3               Men       0       0.0000000   gender          &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4 5931, Netherlands       7       0.1598496 location          zips</span></span>
-<span><span class="co">#&gt; 5 9461, Netherlands       7       0.1598496 location          zips</span></span>
-<span><span class="co">#&gt;   num_obfuscated is_exclusion custom_audience_type         ds main_currency</span></span>
-<span><span class="co">#&gt; 1             NA           NA                 &lt;NA&gt; 2024-12-26           EUR</span></span>
-<span><span class="co">#&gt; 2             NA           NA                 &lt;NA&gt; 2024-12-26           EUR</span></span>
-<span><span class="co">#&gt; 3             NA           NA                 &lt;NA&gt; 2024-12-26           EUR</span></span>
-<span><span class="co">#&gt; 4              0        FALSE                 &lt;NA&gt; 2024-12-26           EUR</span></span>
-<span><span class="co">#&gt; 5              0        FALSE                 &lt;NA&gt; 2024-12-26           EUR</span></span>
-<span><span class="co">#&gt;   total_num_ads total_spend_formatted is_30_day_available is_90_day_available</span></span>
-<span><span class="co">#&gt; 1            44                €7,606                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 2            44                €7,606                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 3            44                €7,606                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 4            44                €7,606                TRUE                TRUE</span></span>
-<span><span class="co">#&gt; 5            44                €7,606                TRUE                TRUE</span></span>
-<span><span class="co">#&gt;           page_id</span></span>
-<span><span class="co">#&gt; 1 121264564551002</span></span>
-<span><span class="co">#&gt; 2 121264564551002</span></span>
-<span><span class="co">#&gt; 3 121264564551002</span></span>
-<span><span class="co">#&gt; 4 121264564551002</span></span>
-<span><span class="co">#&gt; 5 121264564551002</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 0 × 7</span></span>
+<span><span class="co">#&gt; # ℹ 7 variables: ds &lt;chr&gt;, main_currency &lt;chr&gt;, total_num_ads &lt;int&gt;,</span></span>
+<span><span class="co">#&gt; #   total_spend_formatted &lt;chr&gt;, is_30_day_available &lt;lgl&gt;,</span></span>
+<span><span class="co">#&gt; #   is_90_day_available &lt;lgl&gt;, page_id &lt;chr&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-targeting-criteria-last-7-days">Get Targeting Criteria (Last 7 Days)<a class="anchor" aria-label="anchor" href="#get-targeting-criteria-last-7-days"></a>
@@ -178,7 +168,7 @@
 </h2>
 <p>Unfortunately, using <code>get_targeting</code> <strong>you can only get the targeting criteria in the last 7, 30, and 90 days windows</strong>. However, I have set up scrapers that retrieve the daily targeting data for every single page in the world that runs advertisements in order to archive this data. You can use the function below to retrieve it.</p>
 <blockquote>
-<p>Be aware: sometimes the scrapers do not work so it is possible that some pages are missing. You can use <a href="#retrieve-targeting-metadata"><code>retrieve_targeting_metadata</code></a> function to check which data for which country and day is present.</p>
+<p>Be aware: sometimes the scrapers do not work so it is possible that some pages are missing. You can use <a href="#get-targeting-metadata"><code>get_targeting_metadata</code></a> function to check which data for which country and day is present.</p>
 </blockquote>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># # set some parameters</span></span>
@@ -259,21 +249,21 @@
 <span><span class="co">#&gt;  $ page_verification     : chr "BLUE_VERIFIED"</span></span>
 <span><span class="co">#&gt;  $ entity_type           : chr "PERSON_PROFILE"</span></span>
 <span><span class="co">#&gt;  $ page_alias            : chr "VVD"</span></span>
-<span><span class="co">#&gt;  $ likes                 : chr "108137"</span></span>
+<span><span class="co">#&gt;  $ likes                 : chr "109676"</span></span>
 <span><span class="co">#&gt;  $ page_category         : chr "Political party"</span></span>
 <span><span class="co">#&gt;  $ ig_verification       : chr "TRUE"</span></span>
 <span><span class="co">#&gt;  $ ig_username           : chr "vvd"</span></span>
-<span><span class="co">#&gt;  $ ig_followers          : chr "42137"</span></span>
+<span><span class="co">#&gt;  $ ig_followers          : chr "54188"</span></span>
 <span><span class="co">#&gt;  $ shared_disclaimer_info: chr "[]"</span></span>
-<span><span class="co">#&gt;  $ about                 : chr "Doe mee en word lid van de VVD! 💙🧡 "</span></span>
+<span><span class="co">#&gt;  $ about                 : chr "Een sterk en veilig Nederland. Met rust in je portemonnee en alle ruimte voor jou om te groeien en iets op te b"| __truncated__</span></span>
 <span><span class="co">#&gt;  $ event                 : chr "CREATION: 2010-04-23 21:05:02"</span></span>
 <span><span class="co">#&gt;  $ no_address            : logi TRUE</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="retrieve_targeting_metadata">
-<code>retrieve_targeting_metadata()</code><a class="anchor" aria-label="anchor" href="#retrieve_targeting_metadata"></a>
+<h2 id="get_targeting_metadata">
+<code>get_targeting_metadata()</code><a class="anchor" aria-label="anchor" href="#get_targeting_metadata"></a>
 </h2>
-<p>The <code>retrieve_targeting_metadata</code> function is designed to retrieve metadata about targeting data releases from a GitHub repository to see which data is present (or not). It extracts and organizes information such as file names, sizes, timestamps, and tags for a specified country and timeframe. <strong>This metadata provides an overview of the available targeting data without downloading the actual files.</strong></p>
+<p>The <code>get_targeting_metadata</code> function is designed to retrieve metadata about targeting data releases from a GitHub repository to see which data is present (or not). It extracts and organizes information such as file names, sizes, timestamps, and tags for a specified country and timeframe. <strong>This metadata provides an overview of the available targeting data without downloading the actual files.</strong></p>
 <ul>
 <li><p><code>country_code</code> (<em>Character</em>):<br>
 The ISO country code (e.g., <code>"DE"</code> for Germany, <code>"US"</code> for the United States).</p></li>
@@ -295,44 +285,71 @@ The base URL for the GitHub repository hosting the targeting data.</p></li>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Retrieve metadata for Germany for the last 30 days</span></span>
-<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu">retrieve_targeting_metadata</span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"30"</span><span class="op">)</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_targeting_metadata.html">get_targeting_metadata</a></span><span class="op">(</span><span class="st">"DE"</span>, <span class="st">"30"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 314 × 3</span></span>
+<span><span class="co">#&gt; # A tibble: 695 × 3</span></span>
 <span><span class="co">#&gt;    cntry ds         tframe      </span></span>
 <span><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       </span></span>
-<span><span class="co">#&gt;  1 DE    2024-12-26 last_30_days</span></span>
-<span><span class="co">#&gt;  2 DE    2024-12-25 last_30_days</span></span>
-<span><span class="co">#&gt;  3 DE    2024-12-24 last_30_days</span></span>
-<span><span class="co">#&gt;  4 DE    2024-12-23 last_30_days</span></span>
-<span><span class="co">#&gt;  5 DE    2024-12-22 last_30_days</span></span>
-<span><span class="co">#&gt;  6 DE    2024-12-21 last_30_days</span></span>
-<span><span class="co">#&gt;  7 DE    2024-12-20 last_30_days</span></span>
-<span><span class="co">#&gt;  8 DE    2024-12-19 last_30_days</span></span>
-<span><span class="co">#&gt;  9 DE    2024-12-18 last_30_days</span></span>
-<span><span class="co">#&gt; 10 DE    2024-12-17 last_30_days</span></span>
-<span><span class="co">#&gt; # ℹ 304 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt;  1 DE    2026-02-15 last_30_days</span></span>
+<span><span class="co">#&gt;  2 DE    2026-02-14 last_30_days</span></span>
+<span><span class="co">#&gt;  3 DE    2026-02-13 last_30_days</span></span>
+<span><span class="co">#&gt;  4 DE    2026-02-12 last_30_days</span></span>
+<span><span class="co">#&gt;  5 DE    2026-02-11 last_30_days</span></span>
+<span><span class="co">#&gt;  6 DE    2026-02-10 last_30_days</span></span>
+<span><span class="co">#&gt;  7 DE    2026-02-09 last_30_days</span></span>
+<span><span class="co">#&gt;  8 DE    2026-02-08 last_30_days</span></span>
+<span><span class="co">#&gt;  9 DE    2026-02-07 last_30_days</span></span>
+<span><span class="co">#&gt; 10 DE    2026-02-06 last_30_days</span></span>
+<span><span class="co">#&gt; # ℹ 685 more rows</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="get-images-and-videos">Get Images and Videos<a class="anchor" aria-label="anchor" href="#get-images-and-videos"></a>
+<h2 id="get-ad-snapshots-images-videos-and-metadata">Get Ad Snapshots (Images, Videos, and Metadata)<a class="anchor" aria-label="anchor" href="#get-ad-snapshots-images-videos-and-metadata"></a>
 </h2>
-<p>The following code downloads the images and videos of a Meta ad. It also retrieves additional info not present in the Meta Ad Library API (e.g. <code>page_like_count</code> <code>cta_type</code> i.e. call to action button). Just put in the right Ad Archive ID.</p>
-<p>It automatically handles duplicate images and videos (of which there are many) by hashing the images and videos and making sure they are not saved twice.</p>
+<p><code><a href="reference/get_ad_snapshots.html">get_ad_snapshots()</a></code> retrieves snapshot data for a Facebook ad from the Ad Library, including images, videos, cards, body text, page info, and more. It uses headless Chrome (via chromote) to bypass Facebook’s JavaScript-based bot detection.</p>
 <p>This piece of code was created in collaboration with <a href="https://www.uva.nl/en/profile/m/e/p.m.mendoza/p.m.mendoza.html" class="external-link">Philipp Mendoza</a>.</p>
+<div class="section level3">
+<h3 id="single-ad">Single ad<a class="anchor" aria-label="anchor" href="#single-ad"></a>
+</h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="reference/get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="st">"561403598962843"</span>, download <span class="op">=</span> <span class="cn">T</span>, hashing <span class="op">=</span> <span class="cn">T</span>, mediadir <span class="op">=</span> <span class="st">"data/media"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 1 × 52</span></span>
-<span><span class="co">#&gt;   name  ad_creative_id cards         body_translations byline caption   cta_text</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;        &lt;lgl&gt;             &lt;lgl&gt;  &lt;chr&gt;     &lt;lgl&gt;   </span></span>
-<span><span class="co">#&gt; 1 f      6269946734162 &lt;df [2 × 16]&gt; NA                NA     worldmil… NA      </span></span>
-<span><span class="co">#&gt; # ℹ 45 more variables: dynamic_item_flags &lt;lgl&gt;, dynamic_versions &lt;lgl&gt;,</span></span>
-<span><span class="co">#&gt; #   edited_snapshots &lt;lgl&gt;, effective_authorization_category &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   event &lt;lgl&gt;, extra_images &lt;lgl&gt;, extra_links &lt;lgl&gt;, extra_texts &lt;lgl&gt;,</span></span>
-<span><span class="co">#&gt; #   extra_videos &lt;lgl&gt;, instagram_shopping_products &lt;lgl&gt;,</span></span>
-<span><span class="co">#&gt; #   display_format &lt;chr&gt;, title &lt;chr&gt;, link_description &lt;chr&gt;, link_url &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   page_welcome_message &lt;lgl&gt;, images &lt;lgl&gt;, videos &lt;lgl&gt;,</span></span>
-<span><span class="co">#&gt; #   creation_time &lt;int&gt;, page_id &lt;dbl&gt;, page_name &lt;chr&gt;, …</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">snap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="st">"561403598962843"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="batch-processing-recommended-for-multiple-ads">Batch processing (recommended for multiple ads)<a class="anchor" aria-label="anchor" href="#batch-processing-recommended-for-multiple-ads"></a>
+</h3>
+<p>For best performance when processing multiple ads, use a persistent browser session. This passes Facebook’s JS challenge once during startup, so all subsequent calls are fast.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/browser_session_start.html">browser_session_start</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/map_dfr_progress.html">map_dfr_progress</a></span><span class="op">(</span><span class="va">ad_ids</span>, <span class="op">~</span><span class="fu"><a href="reference/get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/browser_session_close.html">browser_session_close</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>If Chrome becomes unresponsive mid-batch, use <code><a href="reference/browser_session_restart.html">browser_session_restart()</a></code> to recover without restarting R.</p>
+</div>
+<div class="section level3">
+<h3 id="download-media-files">Download media files<a class="anchor" aria-label="anchor" href="#download-media-files"></a>
+</h3>
+<p>Setting <code>download = TRUE</code> saves images and videos to disk. Use <code>hashing = TRUE</code> to deduplicate media files (recommended for large-scale collection).</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/get_ad_snapshots.html">get_ad_snapshots</a></span><span class="op">(</span><span class="st">"561403598962843"</span>, download <span class="op">=</span> <span class="cn">TRUE</span>, hashing <span class="op">=</span> <span class="cn">TRUE</span>, mediadir <span class="op">=</span> <span class="st">"data/media"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="fetch-and-cache-ad-html">Fetch and Cache Ad HTML<a class="anchor" aria-label="anchor" href="#fetch-and-cache-ad-html"></a>
+</h2>
+<p><code><a href="reference/get_ad_html.html">get_ad_html()</a></code> fetches the raw HTML for one or more ads and caches results to disk as gzipped files. Useful for archiving or downstream parsing with <code>parse_ad_htmls()</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_ad_html.html">get_ad_html</a></span><span class="op">(</span></span>
+<span>  ad_ids  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"561403598962843"</span>, <span class="st">"1103135646905363"</span><span class="op">)</span>,</span>
+<span>  country <span class="op">=</span> <span class="st">"US"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="get-deeplink-data">Get Deeplink Data<a class="anchor" aria-label="anchor" href="#get-deeplink-data"></a>
+</h2>
+<p><code><a href="reference/get_deeplink.html">get_deeplink()</a></code> extracts the full <code>deeplinkAdCard</code> JSON object from an ad page, which contains additional metadata beyond what <code><a href="reference/get_ad_snapshots.html">get_ad_snapshots()</a></code> returns (e.g., <code>fevInfo</code>, <code>free_form_additional_info</code>, <code>learn_more_content</code>).</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_deeplink.html">get_deeplink</a></span><span class="op">(</span><span class="st">"561403598962843"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="google-transparency-report">Google Transparency Report<a class="anchor" aria-label="anchor" href="#google-transparency-report"></a>
@@ -343,38 +360,34 @@ The base URL for the GitHub repository hosting the targeting data.</p></li>
 <h3 id="retrieve-aggregated-spending-data">Retrieve Aggregated Spending Data<a class="anchor" aria-label="anchor" href="#retrieve-aggregated-spending-data"></a>
 </h3>
 <p>Retrieve aggregated spending data for a specific advertiser in the Netherlands. It returns details like currency, number of ads, ad type breakdown, advertiser details, and other metrics.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="reference/ggl_get_spending.html">ggl_get_spending</a></span><span class="op">(</span>advertiser_id <span class="op">=</span> <span class="st">"AR18091944865565769729"</span>, </span>
 <span>                 start_date <span class="op">=</span> <span class="st">"2023-10-24"</span>, </span>
 <span>                 end_date <span class="op">=</span> <span class="st">"2023-11-22"</span>,</span>
 <span>                 cntry <span class="op">=</span> <span class="st">"NL"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 1 × 18</span></span>
-<span><span class="co">#&gt;   currency spend number_of_ads text_ad_perc text_ad_spend text_type vid_ad_perc</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;                &lt;dbl&gt;         &lt;dbl&gt;     &lt;int&gt;       &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 EUR      56050 160                  0.319         0.521         3       0.681</span></span>
-<span><span class="co">#&gt; # ℹ 11 more variables: vid_ad_spend &lt;dbl&gt;, vid_type &lt;int&gt;, metric &lt;int&gt;,</span></span>
-<span><span class="co">#&gt; #   advertiser_id &lt;chr&gt;, advertiser_name &lt;chr&gt;, cntry &lt;chr&gt;, unk1 &lt;int&gt;,</span></span>
-<span><span class="co">#&gt; #   unk2 &lt;int&gt;, unk3 &lt;int&gt;, unk4 &lt;chr&gt;, unk5 &lt;chr&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 1 × 2</span></span>
+<span><span class="co">#&gt;   spend number_of_ads</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt;         &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1     0             0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="retrieve-time-based-spending-data">Retrieve Time-Based Spending Data<a class="anchor" aria-label="anchor" href="#retrieve-time-based-spending-data"></a>
 </h3>
 <p>Retrieve time-based spending data for the same advertiser and country. If <code>get_times</code> is set to <code>TRUE</code>, it returns a tibble with date-wise spending data.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve time-based spending data for the same advertiser and country</span></span>
-<span><span class="va">timeseries_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ggl_get_spending.html">ggl_get_spending</a></span><span class="op">(</span>advertiser_id <span class="op">=</span> <span class="st">"AR18091944865565769729"</span>, </span>
-<span>                                   start_date <span class="op">=</span> <span class="st">"2023-10-24"</span>, </span>
-<span>                                   end_date <span class="op">=</span> <span class="st">"2023-11-22"</span>, </span>
-<span>                                   cntry <span class="op">=</span> <span class="st">"NL"</span>, </span>
+<span><span class="va">timeseries_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ggl_get_spending.html">ggl_get_spending</a></span><span class="op">(</span>advertiser_id <span class="op">=</span> <span class="st">"AR18091944865565769729"</span>,</span>
+<span>                                   start_date <span class="op">=</span> <span class="st">"2023-10-24"</span>,</span>
+<span>                                   end_date <span class="op">=</span> <span class="st">"2023-11-22"</span>,</span>
+<span>                                   cntry <span class="op">=</span> <span class="st">"NL"</span>,</span>
 <span>                                   get_times <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plotting the time-series data</span></span>
-<span><span class="va">timeseries_dat</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> </span>
-<span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">ggplot</span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">aes</span><span class="op">(</span><span class="va">date</span>, <span class="va">spend</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="va">timeseries_dat</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">ggplot</span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">spend</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">geom_col</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-10-1.png" width="100%"></p>
 <hr>
 </div>
 </div>
@@ -393,13 +406,13 @@ The base URL for the GitHub repository hosting the targeting data.</p></li>
 <div class="section level3">
 <h3 id="bibtex-entry">BibTeX Entry<a class="anchor" aria-label="anchor" href="#bibtex-entry"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">votta2024metatargetr</span>,</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="dt">author</span> = {Votta, Fabio and Mendoza, Philipp},</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="dt">title</span> = {metatargetr: A package for parsing and analyzing ad library and targeting data},</span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="dt">publisher</span> = {GitHub},</span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="dt">url</span> = {https://github.com/favstats/metatargetr}</span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">votta2024metatargetr</span>,</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="dt">author</span> = {Votta, Fabio and Mendoza, Philipp},</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="dt">title</span> = {metatargetr: A package for parsing and analyzing ad library and targeting data},</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  <span class="dt">publisher</span> = {GitHub},</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="dt">url</span> = {https://github.com/favstats/metatargetr}</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="additional-notes">Additional Notes<a class="anchor" aria-label="anchor" href="#additional-notes"></a>
