@@ -1,3 +1,40 @@
+# metatargetr 0.0.8
+
+## New features
+
+* New `search_ad_library()` function to search the Facebook Ad Library by page
+  ID or text query **without an API key**. Uses headless Chrome to extract ad
+  data from server-side rendered HTML (~30 ads per page). Supports experimental
+  pagination via GraphQL.
+
+  ```r
+  browser_session_start()
+  # Get all ads from a specific page
+  ads <- search_ad_library(page_id = "52985377549")
+  # Search by keyword
+  ads <- search_ad_library(query = "Rob Jetten", country = "NL")
+  # Check for political ads
+  ads %>% filter(categories == "POLITICAL")
+  browser_session_close()
+  ```
+
+  Returns rich metadata per ad:
+  - **Ad identity**: `ad_archive_id`, `page_name`, `page_id`, `ad_library_url`
+  - **Classification**: `categories` (e.g., `"POLITICAL"`), `is_active`
+  - **Dates**: `start_date`, `end_date` (POSIXct)
+  - **Spend & reach**: `spend`, `currency`, `reach_estimate`, `impressions_lower`,
+    `impressions_upper`
+  - **Creative**: `body`, `title`, `caption`, `link_url`, `link_description`,
+    `cta_text`, `display_format`, `images`, `videos`, `cards`
+  - **Regulation**: `disclaimer_label`, `byline`, `publisher_platform`
+
+  Additional parameters: `active_status`, `date_min`/`date_max`, `media_type`,
+  `publisher_platforms`, `content_languages`, `search_type`, `sort_mode`,
+  `sort_direction`.
+
+  Detects Facebook rate limiting (error 1675004) and reports it clearly instead
+  of returning empty/phantom data.
+
 # metatargetr 0.0.7
 
 ## Bug fixes

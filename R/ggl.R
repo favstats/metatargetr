@@ -1,6 +1,106 @@
+# Internal helpers for Google transparency parsing/download tests and robustness.
+.ggl_country_dict <- function() {
+    c(
+        NL = "2528", DE = "2276", BE = "2056", AR = "2032",
+        AU = "2036", BR = "2076", CL = "2152", AT = "2040",
+        BG = "2100", HR = "2191", CY = "2196", CZ = "2203",
+        DK = "2208", EE = "2233", FI = "2246", FR = "2250",
+        GR = "2300", HU = "2348", IE = "2372", IT = "2380",
+        LV = "2428", LT = "2440", LU = "2442", MT = "2470",
+        PL = "2616", PT = "2620", RO = "2642", SK = "2703",
+        SI = "2705", ES = "2724", SE = "2752", IN = "2356",
+        IL = "2376", ZA = "2710", TW = "2158", UK = "2826",
+        US = "2840"
+    )
+}
+
+.ggl_country_id <- function(cntry) {
+    if (!is.character(cntry) || length(cntry) != 1 || is.na(cntry) || !nzchar(cntry)) {
+        cli::cli_abort("{.arg cntry} must be a single non-empty country code.")
+    }
+    code <- toupper(cntry)
+    mapped <- unname(.ggl_country_dict()[code])
+    if (length(mapped) == 0 || is.na(mapped)) {
+        cli::cli_abort("Unsupported {.arg cntry} value: {.val {cntry}}.")
+    }
+    mapped
+}
+
+.ggl_post <- function(url, headers, body) {
+    httr::POST(url, httr::add_headers(.headers = headers), body = body, encode = "form")
+}
+
+.ggl_content <- function(response) {
+    httr::content(response, "parsed")
+}
+
+.ggl_flatten_named <- function(x, col_names) {
+    values <- unlist(x, recursive = TRUE, use.names = FALSE)
+    out <- rep(NA_character_, length(col_names))
+    n_fill <- min(length(values), length(col_names))
+    if (n_fill > 0) {
+        out[seq_len(n_fill)] <- as.character(values[seq_len(n_fill)])
+    }
+    out <- as.list(stats::setNames(out, col_names))
+    tibble::as_tibble(out)
+}
+
+.ggl_rows_to_tibble <- function(x, col_names) {
+    if (is.null(x) || length(x) == 0) {
+        empty <- vector("list", length(col_names))
+        names(empty) <- col_names
+        empty <- lapply(empty, function(...) character())
+        return(tibble::as_tibble(empty))
+    }
+
+    rows <- purrr::map(x, function(row) {
+        values <- unlist(row, recursive = TRUE, use.names = FALSE)
+        out <- rep(NA_character_, length(col_names))
+        n_fill <- min(length(values), length(col_names))
+        if (n_fill > 0) {
+            out[seq_len(n_fill)] <- as.character(values[seq_len(n_fill)])
+        }
+        tibble::as_tibble(as.list(stats::setNames(out, col_names)))
+    })
+
+    dplyr::bind_rows(rows)
+}
+
+.ggl_parse_ad_mix <- function(x) {
+    out <- tibble::tibble(
+        text_ad_perc = NA_real_, text_ad_spend = NA_real_, text_type = NA_character_,
+        img_ad_perc = NA_real_, img_ad_spend = NA_real_, img_type = NA_character_,
+        vid_ad_perc = NA_real_, vid_ad_spend = NA_real_, vid_type = NA_character_
+    )
+
+    ad_mix <- .ggl_rows_to_tibble(x, c("ad_perc", "ad_spend", "ad_type"))
+    if (nrow(ad_mix) == 0) {
+        return(out)
+    }
+
+    for (i in seq_len(nrow(ad_mix))) {
+        ad_type <- ad_mix$ad_type[[i]]
+        if (identical(ad_type, "3")) {
+            out$text_ad_perc <- as.numeric(ad_mix$ad_perc[[i]])
+            out$text_ad_spend <- as.numeric(ad_mix$ad_spend[[i]])
+            out$text_type <- ad_type
+        } else if (identical(ad_type, "2")) {
+            out$img_ad_perc <- as.numeric(ad_mix$ad_perc[[i]])
+            out$img_ad_spend <- as.numeric(ad_mix$ad_spend[[i]])
+            out$img_type <- ad_type
+        } else if (identical(ad_type, "1")) {
+            out$vid_ad_perc <- as.numeric(ad_mix$ad_perc[[i]])
+            out$vid_ad_spend <- as.numeric(ad_mix$ad_spend[[i]])
+            out$vid_type <- ad_type
+        }
+    }
+
+    out
+}
+
 #' Retrieve Google Ad Spending Data
 #'
-#' This function queries the Google Ad Library to retrieve information about
+#' This function queries the Google Ads Transparency Report to retrieve information about
 #' advertising spending for a specified advertiser. It supports a range of countries
 #' and can return either aggregated data or time-based spending data.
 #'
@@ -35,40 +135,46 @@
 ggl_get_spending <- function(advertiser_id,
                              start_date = 20231029, end_date = 20231128,
                              cntry = "NL",
-                             get_times = F) {
-
-    if(lubridate::is.Date(start_date)|is.character(start_date)){
-        start_date <- lubridate::ymd(start_date) %>% stringr::str_remove_all("-") %>% as.numeric()
+                             get_times = FALSE) {
+    if (!is.character(advertiser_id) || length(advertiser_id) != 1 || is.na(advertiser_id) || !nzchar(advertiser_id)) {
+        cli::cli_abort("{.arg advertiser_id} must be a single non-empty string.")
     }
-    if(lubridate::is.Date(end_date)|is.character(end_date)){
-        end_date <- lubridate::ymd(end_date) %>% stringr::str_remove_all("-") %>% as.numeric() %>% magrittr::add(1)
-    } else if(is.numeric(end_date)){
+    if (!is.logical(get_times) || length(get_times) != 1 || is.na(get_times)) {
+        cli::cli_abort("{.arg get_times} must be TRUE or FALSE.")
+    }
+
+    start_date_input <- start_date
+    end_date_input <- end_date
+
+    if (lubridate::is.Date(start_date) || is.character(start_date)) {
+        start_date <- lubridate::ymd(start_date, quiet = TRUE)
+        if (is.na(start_date)) {
+            cli::cli_abort("Invalid {.arg start_date}: {.val {start_date_input}}.")
+        }
+        start_date <- as.numeric(format(start_date, "%Y%m%d"))
+    }
+
+    if (lubridate::is.Date(end_date) || is.character(end_date)) {
+        end_date <- lubridate::ymd(end_date, quiet = TRUE)
+        if (is.na(end_date)) {
+            cli::cli_abort("Invalid {.arg end_date}: {.val {end_date_input}}.")
+        }
+        end_date <- as.numeric(format(end_date + 1, "%Y%m%d"))
+    } else if (is.numeric(end_date)) {
         end_date <- end_date + 1
     }
 
-    # statsType <- 2
-    # advertiser_id = "AR10605432864201768961"
-    cntry_dict <- c(NL = "2528", DE = "2276",
-                    BE = "2056", AR = "2032",
-                    AU = "2036", BR = "2076",
-                    CL = "2152", AT = "2040",
-                    BG = "2100", HR = "2191",
-                    CY = "2196", CZ = "2203",
-                    DK = "2208", EE = "2233",
-                    FI = "2246", FR = "2250",
-                    GR = "2300", HU = "2348",
-                    IE = "2372", IT = "2380",
-                    LV = "2428", LT = "2440",
-                    LU = "2442", MT = "2470",
-                    PL = "2616", PT = "2620",
-                    RO = "2642", SK = "2703",
-                    SI = "2705", ES = "2724",
-                    SE = "2752", IN = "2356",
-                    IL = "2376", ZA = "2710",
-                    TW = "2158", UK = "2826",
-                    US = "2826")
+    if (!is.numeric(start_date) || length(start_date) != 1 || is.na(start_date)) {
+        cli::cli_abort("{.arg start_date} must be a valid date or YYYYMMDD number.")
+    }
+    if (!is.numeric(end_date) || length(end_date) != 1 || is.na(end_date)) {
+        cli::cli_abort("{.arg end_date} must be a valid date or YYYYMMDD number.")
+    }
+    if (end_date <= start_date) {
+        cli::cli_abort("{.arg end_date} must be on or after {.arg start_date}.")
+    }
 
-    cntry <- cntry_dict[[cntry]]
+    cntry <- .ggl_country_id(cntry)
 
     # Define the URL
     url <- "https://adstransparency.google.com/anji/_/rpc/StatsService/GetStats?authuser="
@@ -92,74 +198,58 @@ ggl_get_spending <- function(advertiser_id,
     body <- paste0('f.req={"1":{"1":"', advertiser_id,
                    '","6":', start_date,
                    ',"7":', end_date,
-                   ',"8":', jsonlite::toJSON(cntry),
+                   ',"8":', jsonlite::toJSON(cntry, auto_unbox = TRUE),
                    '},"3":{"1":2}}')
 
     # Make the POST request
-    response <- httr::POST(url, httr::add_headers(.headers = headers), body = body, encode = "form")
+    response <- .ggl_post(url, headers, body)
 
     # Extract the content
-    res <- httr::content(response, "parsed")
+    res <- .ggl_content(response)
 
     ress <- res$`1`
 
-    if(length(ress)==0){
+    if (is.null(ress) || length(ress) == 0) {
         return(tibble::tibble(spend = 0, number_of_ads = 0))
     }
 
-    dat1 <- ress$`1` %>%
-        purrr::flatten() %>%
-        purrr::flatten() %>%
-        purrr::set_names(c("currency", "spend"))
+    dat1 <- .ggl_flatten_named(ress$`1`, c("currency", "spend"))
+    dat2 <- .ggl_flatten_named(ress$`2`, c("number_of_ads"))
+    dat3 <- .ggl_parse_ad_mix(ress$`3`)
+    dat4 <- .ggl_flatten_named(ress$`5`, c("metric", "advertiser_id", "advertiser_name", "cntry"))
+    dat5 <- .ggl_flatten_named(ress$`6`, c("unk1", "unk2", "unk3"))
+    dat6 <- .ggl_flatten_named(ress$`8`, c("unk4", "unk5"))
 
-    dat2 <- ress$`2` %>% tibble::as_tibble() %>% purrr::set_names("number_of_ads")
-
-
-
-
-    dat3 <- ress$`3` %>%
-        purrr::map(tibble::as_tibble) %>%
-        purrr::map_dfc(~{
-            if (.x[3] == "3") {
-                purrr::set_names(.x, c("text_ad_perc", "text_ad_spend", "text_type"))
-            }  else  if (.x[3] == "2") {
-                purrr::set_names(.x, c("img_ad_perc", "img_ad_spend", "img_type"))
-            } else   if (.x[3] == "1") {
-                purrr::set_names(.x, c("vid_ad_perc", "vid_ad_spend", "vid_type"))
-            }
-        })
-
-    dat4 <-ress$`5`  %>%
-        purrr::flatten() %>%
-        purrr::flatten() %>%
-        purrr::set_names(c("metric", "advertiser_id", "advertiser_name", "cntry"))
-
-    dat5 <-ress$`6`  %>%
-        purrr::flatten() %>%
-        purrr::flatten() %>%
-        purrr::set_names(c("unk1", "unk2", "unk3"))
-
-    timedat <- ress$`7` %>%
-        purrr::map_dfr(tibble::as_tibble) %>%
-        purrr::set_names(c("perc_spend", "date")) %>%
-        dplyr::mutate(total_spend = as.numeric(dat1$spend)) %>%
-        dplyr::mutate(spend = total_spend*perc_spend) %>%
-        dplyr::mutate(date = lubridate::ymd(date))
-
-    dat6 <-ress$`8`   %>%
-        purrr::flatten() %>%
-        purrr::flatten() %>%
-        purrr::set_names(c("unk4", "unk5"))
+    timedat <- .ggl_rows_to_tibble(ress$`7`, c("perc_spend", "date"))
+    if (nrow(timedat) > 0) {
+        timedat <- timedat %>%
+            dplyr::mutate(
+                perc_spend = as.numeric(perc_spend),
+                date = lubridate::ymd(date),
+                total_spend = as.numeric(dat1$spend[[1]]),
+                spend = total_spend * perc_spend
+            )
+    } else {
+        timedat <- tibble::tibble(
+            perc_spend = numeric(),
+            date = as.Date(character()),
+            total_spend = numeric(),
+            spend = numeric()
+        )
+    }
 
     fin <- dat1 %>%
-        tibble::as_tibble() %>%
         dplyr::bind_cols(dat2) %>%
         dplyr::bind_cols(dat3) %>%
         dplyr::bind_cols(dat4) %>%
         dplyr::bind_cols(dat5) %>%
-        dplyr::bind_cols(dat6)
+        dplyr::bind_cols(dat6) %>%
+        dplyr::mutate(
+            spend = as.numeric(spend),
+            number_of_ads = as.numeric(number_of_ads)
+        )
 
-    if(get_times){
+    if (get_times) {
         return(timedat)
     } else {
         return(fin)
@@ -168,12 +258,34 @@ ggl_get_spending <- function(advertiser_id,
 }
 
 # library(tidyverse)
-# ggl_get_spending(advertiser_id = "AR18091944865565769729", get_times = T) %>%
+# ggl_get_spending(advertiser_id = "AR18091944865565769729", get_times = TRUE) %>%
 #     ggplot(aes(date, spend)) +
 #     geom_line()
 #
-# ggl_get_spending(advertiser_id = "AR18091944865565769729", get_times = F)
+# ggl_get_spending(advertiser_id = "AR18091944865565769729", get_times = FALSE)
 
+
+.ggl_download_bundle <- function(zip_url, zip_path) {
+    req <- httr2::request(zip_url) |>
+        httr2::req_user_agent("metatargetr R package (https://github.com/favstats/metatargetr)")
+
+    resp <- try(httr2::req_perform(req, path = zip_path), silent = TRUE)
+    if (inherits(resp, "try-error") || httr2::resp_is_error(resp)) {
+        cli::cli_abort("Failed to download the data bundle from Google. Please check your internet connection or the URL: {.url {zip_url}}")
+    }
+    invisible(resp)
+}
+
+.ggl_unzip_bundle <- function(zip_path, temp_dir) {
+    tryCatch(
+        utils::unzip(zip_path, exdir = temp_dir),
+        error = function(e) cli::cli_abort("Failed to unzip the downloaded file. It may be corrupt.")
+    )
+}
+
+.ggl_read_csv <- function(path, quiet) {
+    readr::read_csv(path, show_col_types = FALSE, progress = !quiet)
+}
 
 
 
@@ -257,6 +369,12 @@ ggl_get_spending <- function(advertiser_id,
 get_ggl_ads <-  function(file_to_read = "creatives",
                          keep_file_at = NULL,
                          quiet = FALSE) {
+    if (!is.character(file_to_read) || length(file_to_read) != 1 || is.na(file_to_read) || !nzchar(file_to_read)) {
+        cli::cli_abort("{.arg file_to_read} must be a single non-empty string.")
+    }
+    if (!is.logical(quiet) || length(quiet) != 1 || is.na(quiet)) {
+        cli::cli_abort("{.arg quiet} must be TRUE or FALSE.")
+    }
 
     # --- 1. Argument Validation and Mapping ---
     file_map <- c(
@@ -276,7 +394,7 @@ get_ggl_ads <-  function(file_to_read = "creatives",
     # Resolve user input to a full filename
     if (file_to_read %in% names(file_map)) {
         # User provided a valid alias
-        target_filename <- file_map[file_to_read]
+        target_filename <- unname(file_map[file_to_read])
     } else if (file_to_read %in% unname(file_map)) {
         # User provided a valid full filename
         target_filename <- file_to_read
@@ -305,23 +423,12 @@ get_ggl_ads <-  function(file_to_read = "creatives",
     # --- 3. Download the Data Bundle ---
     if (!quiet) cli::cli_alert_info("Downloading data bundle from Google... (This may take a moment)")
 
-    req <- httr2::request(zip_url) |>
-        httr2::req_user_agent("metatargetr R package (https://github.com/favstats/metatargetr)")
-
-    resp <- try(httr2::req_perform(req, path = zip_path), silent = TRUE)
-
-    if (inherits(resp, "try-error") || httr2::resp_is_error(resp)) {
-        cli::cli_abort("Failed to download the data bundle from Google. Please check your internet connection or the URL: {.url {zip_url}}")
-    }
+    .ggl_download_bundle(zip_url, zip_path)
 
     if (!quiet) cli::cli_alert_success("Download complete. Extracting files...")
 
     # --- 4. Extract and Read the Specified File ---
-    tryCatch({
-        utils::unzip(zip_path, exdir = temp_dir)
-    }, error = function(e) {
-        cli::cli_abort("Failed to unzip the downloaded file. It may be corrupt.")
-    })
+    .ggl_unzip_bundle(zip_path, temp_dir)
 
     target_csv_path <- file.path(temp_dir, target_filename)
 
@@ -336,7 +443,7 @@ get_ggl_ads <-  function(file_to_read = "creatives",
     if (!quiet) cli::cli_alert_info("Reading data from {.file {target_filename}}...")
 
     # Read the CSV into memory
-    report_data <- readr::read_csv(target_csv_path, show_col_types = FALSE, progress = !quiet)
+    report_data <- .ggl_read_csv(target_csv_path, quiet)
 
     # --- 5. Handle File Persistence ---
     if (!is.null(keep_file_at)) {

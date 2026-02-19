@@ -12,6 +12,7 @@ test_that("browser_session_active returns FALSE when no session", {
 
 test_that("browser_session_start and close work", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   # Start session
@@ -26,6 +27,7 @@ test_that("browser_session_start and close work", {
 
 test_that("persistent session is reused by get_ad_snapshots", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   # Start persistent session
@@ -59,6 +61,7 @@ test_that("persistent session is reused by get_ad_snapshots", {
 
 test_that("multiple functions can share a session", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   browser_session_start()

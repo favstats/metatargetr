@@ -7,6 +7,7 @@
 
 test_that("get_ad_snapshots returns a tibble with expected columns", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   # Use a known ad ID
@@ -33,6 +34,7 @@ test_that("get_ad_snapshots returns a tibble with expected columns", {
 
 test_that("get_ad_snapshots handles media columns", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"
@@ -47,6 +49,7 @@ test_that("get_ad_snapshots handles media columns", {
 
 test_that("get_ad_snapshots handles invalid ad gracefully", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   # Use a clearly invalid ad ID
@@ -69,6 +72,7 @@ test_that("get_ad_snapshots handles invalid ad gracefully", {
 
 test_that("get_ad_snapshots respects wait_sec parameter", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"

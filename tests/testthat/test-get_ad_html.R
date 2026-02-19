@@ -6,6 +6,7 @@
 
 test_that("get_ad_html returns paths by default", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"
@@ -30,6 +31,7 @@ test_that("get_ad_html returns paths by default", {
 
 test_that("get_ad_html caching works", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"
@@ -71,6 +73,7 @@ test_that("get_ad_html caching works", {
 
 test_that("get_ad_html returns list when return_type='list'", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"
@@ -99,6 +102,7 @@ test_that("get_ad_html returns list when return_type='list'", {
 
 test_that("get_ad_html handles multiple ads", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_ids <- c("1103135646905363", "561403598962843")
@@ -125,6 +129,7 @@ test_that("get_ad_html handles multiple ads", {
 
 test_that("get_ad_html strip_css removes style tags", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"

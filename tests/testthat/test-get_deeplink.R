@@ -6,6 +6,7 @@
 
 test_that("get_deeplink returns a tibble with expected columns", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"
@@ -23,6 +24,7 @@ test_that("get_deeplink returns a tibble with expected columns", {
 
 test_that("get_deeplink returns more columns than get_ad_snapshots", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   ad_id <- "1103135646905363"
@@ -37,6 +39,7 @@ test_that("get_deeplink returns more columns than get_ad_snapshots", {
 
 test_that("get_deeplink handles invalid ad", {
   skip_on_cran()
+  skip_if_no_live_tests()
   skip_if_not_installed("chromote")
 
   # Invalid ad ID should either error or return minimal data
