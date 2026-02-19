@@ -13,13 +13,13 @@ Source:
 [`DESCRIPTION`](https://github.com/favstats/metatargetr/blob/master/DESCRIPTION)
 
 Votta F, Mendoza P (2026). *metatargetr: Retrieve and Parse Meta Ad
-Targeting Data*. R package version 0.0.7,
+Targeting Data*. R package version 0.0.8,
 <https://github.com/favstats/metatargetr>.
 
     @Manual{,
       title = {metatargetr: Retrieve and Parse Meta Ad Targeting Data},
       author = {Fabio Votta and Philipp Mendoza},
       year = {2026},
-      note = {R package version 0.0.7},
+      note = {R package version 0.0.8},
       url = {https://github.com/favstats/metatargetr},
     }

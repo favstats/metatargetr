@@ -368,7 +368,7 @@ timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729",
                                    start_date = "2023-10-24",
                                    end_date = "2023-11-22",
                                    cntry = "NL",
-                                   get_times = T)
+                                   get_times = TRUE)
 
 # Plotting the time-series data
 timeseries_dat %>%

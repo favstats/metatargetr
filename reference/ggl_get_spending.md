@@ -1,9 +1,9 @@
 # Retrieve Google Ad Spending Data
 
-This function queries the Google Ad Library to retrieve information
-about advertising spending for a specified advertiser. It supports a
-range of countries and can return either aggregated data or time-based
-spending data.
+This function queries the Google Ads Transparency Report to retrieve
+information about advertising spending for a specified advertiser. It
+supports a range of countries and can return either aggregated data or
+time-based spending data.
 
 ## Usage
 
@@ -13,7 +13,7 @@ ggl_get_spending(
   start_date = 20231029,
   end_date = 20231128,
   cntry = "NL",
-  get_times = F
+  get_times = FALSE
 )
 ```
 

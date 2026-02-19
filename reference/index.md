@@ -65,6 +65,8 @@
   Parse Important Information from an Ad Detail HTML Page
 - [`parse_location()`](parse_location.md) : Parse Location from Ad
   Targeting Dataset
+- [`search_ad_library()`](search_ad_library.md) : Search the Facebook Ad
+  Library
 - [`set_metatargetr_options()`](set_metatargetr_options.md) :
   Interactively Set and Save User Settings
 - [`stupid_conversion()`](stupid_conversion.md) : Convert an entry for

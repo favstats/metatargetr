@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metatargetr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,44 @@
       <small>Source: <a href="https://github.com/favstats/metatargetr/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.8" id="metatargetr-008">metatargetr 0.0.8<a class="anchor" aria-label="anchor" href="#metatargetr-008"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-0-8">New features<a class="anchor" aria-label="anchor" href="#new-features-0-0-8"></a></h3>
+<ul><li>
+<p>New <code><a href="../reference/search_ad_library.html">search_ad_library()</a></code> function to search the Facebook Ad Library by page ID or text query <strong>without an API key</strong>. Uses headless Chrome to extract ad data from server-side rendered HTML (~30 ads per page). Supports experimental pagination via GraphQL.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/browser_session_start.html">browser_session_start</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Get all ads from a specific page</span></span>
+<span><span class="va">ads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_ad_library.html">search_ad_library</a></span><span class="op">(</span>page_id <span class="op">=</span> <span class="st">"52985377549"</span><span class="op">)</span></span>
+<span><span class="co"># Search by keyword</span></span>
+<span><span class="va">ads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_ad_library.html">search_ad_library</a></span><span class="op">(</span>query <span class="op">=</span> <span class="st">"Rob Jetten"</span>, country <span class="op">=</span> <span class="st">"NL"</span><span class="op">)</span></span>
+<span><span class="co"># Check for political ads</span></span>
+<span><span class="va">ads</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">categories</span> <span class="op">==</span> <span class="st">"POLITICAL"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/browser_session_close.html">browser_session_close</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Returns rich metadata per ad:</p>
+<ul><li>
+<strong>Ad identity</strong>: <code>ad_archive_id</code>, <code>page_name</code>, <code>page_id</code>, <code>ad_library_url</code>
+</li>
+<li>
+<strong>Classification</strong>: <code>categories</code> (e.g., <code>"POLITICAL"</code>), <code>is_active</code>
+</li>
+<li>
+<strong>Dates</strong>: <code>start_date</code>, <code>end_date</code> (POSIXct)</li>
+<li>
+<strong>Spend &amp; reach</strong>: <code>spend</code>, <code>currency</code>, <code>reach_estimate</code>, <code>impressions_lower</code>, <code>impressions_upper</code>
+</li>
+<li>
+<strong>Creative</strong>: <code>body</code>, <code>title</code>, <code>caption</code>, <code>link_url</code>, <code>link_description</code>, <code>cta_text</code>, <code>display_format</code>, <code>images</code>, <code>videos</code>, <code>cards</code>
+</li>
+<li>
+<strong>Regulation</strong>: <code>disclaimer_label</code>, <code>byline</code>, <code>publisher_platform</code>
+</li>
+</ul><p>Additional parameters: <code>active_status</code>, <code>date_min</code>/<code>date_max</code>, <code>media_type</code>, <code>publisher_platforms</code>, <code>content_languages</code>, <code>search_type</code>, <code>sort_mode</code>, <code>sort_direction</code>.</p>
+<p>Detects Facebook rate limiting (error 1675004) and reports it clearly instead of returning empty/phantom data.</p>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.7" id="metatargetr-007">metatargetr 0.0.7<a class="anchor" aria-label="anchor" href="#metatargetr-007"></a></h2>
 <div class="section level3">

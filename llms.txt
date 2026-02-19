@@ -368,7 +368,7 @@ timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729",
                                    start_date = "2023-10-24",
                                    end_date = "2023-11-22",
                                    cntry = "NL",
-                                   get_times = T)
+                                   get_times = TRUE)
 
 # Plotting the time-series data
 timeseries_dat %>%
@@ -487,6 +487,8 @@ Thank you for your collaboration!
   Parse Important Information from an Ad Detail HTML Page
 - [`parse_location()`](parse_location.md) : Parse Location from Ad
   Targeting Dataset
+- [`search_ad_library()`](search_ad_library.md) : Search the Facebook Ad
+  Library
 - [`set_metatargetr_options()`](set_metatargetr_options.md) :
   Interactively Set and Save User Settings
 - [`stupid_conversion()`](stupid_conversion.md) : Convert an entry for
