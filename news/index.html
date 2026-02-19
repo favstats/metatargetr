@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metatargetr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,13 @@
       <small>Source: <a href="https://github.com/favstats/metatargetr/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.7" id="metatargetr-007">metatargetr 0.0.7<a class="anchor" aria-label="anchor" href="#metatargetr-007"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-7">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-7"></a></h3>
+<ul><li>Fixed <code><a href="../reference/get_ad_snapshots.html">get_ad_snapshots()</a></code> always returning data for the wrong ad (e.g., “Meesho” regardless of requested ad ID). Facebook’s server-side rendered script tags now contain a bundle of 25+ ads’ snapshot data in a single <code>&lt;script&gt;</code> element. The old <code><a href="../reference/detectmysnap.html">detectmysnap()</a></code> always extracted the first <code>"snapshot":</code> occurrence, which belonged to whichever ad Facebook placed first in the bundle. The function now accepts an <code>ad_id</code> parameter, locates the ad ID in the raw text, and extracts the nearest <code>"snapshot":</code> JSON object after it, ensuring each ad gets its own correct data.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.6" id="metatargetr-006">metatargetr 0.0.6<a class="anchor" aria-label="anchor" href="#metatargetr-006"></a></h2>
 <div class="section level3">
