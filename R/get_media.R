@@ -48,15 +48,20 @@ detectmysnap_dep <- function(rawhtmlascharacter) {
 
 #' Detect and parse the snapshot JSON from a Facebook Ad Library script tag
 #'
-#' Splits the raw HTML on `"snapshot":`, extracts the first JSON object
-#' using a recursive regex, and parses it with `jsonlite::fromJSON()`.
-#' Includes input validation at each step to produce clear error messages
-#' instead of cryptic JSON parse failures.
+#' Facebook's SSR script tags contain a bundle of many ads' snapshot data.
+#' This function locates the `"snapshot":` occurrence that belongs to the
+#' requested `ad_id` by first finding the ad_id in the raw text and then
+#' extracting the nearest `"snapshot":` JSON object after it.
+#'
+#' Falls back to the original split-based approach when no ad_id is provided.
 #'
 #' @inheritParams detectmysnap_dep
+#' @param ad_id Character string. The Facebook ad ID to find in the bundle.
+#'   When provided, the function extracts only the snapshot belonging to this
+#'   ad. When NULL, extracts the first snapshot found (legacy behavior).
 #' @return A parsed JSON object (list).
 #' @seealso [get_ad_snapshots()] which calls this function internally.
-detectmysnap <- function(rawhtmlascharacter) {
+detectmysnap <- function(rawhtmlascharacter, ad_id = NULL) {
     # Guard against NA, NULL, or empty input
     if (length(rawhtmlascharacter) == 0 ||
         all(is.na(rawhtmlascharacter)) ||
@@ -64,11 +69,74 @@ detectmysnap <- function(rawhtmlascharacter) {
         stop("Input is NA or empty")
     }
 
-    # Use only the first non-NA element
-    rawhtmlascharacter <- rawhtmlascharacter[!is.na(rawhtmlascharacter)][1]
+    # Use the LAST non-NA element
+    non_na <- rawhtmlascharacter[!is.na(rawhtmlascharacter)]
+    raw_text <- non_na[length(non_na)]
 
+    # Strategy: if ad_id is provided, find the chunk of the script tag that
+    # contains this ad_id and extract the "snapshot": JSON from there.
+    # Facebook's SSR bundles multiple ads in one script tag; each ad's data
+    # block contains the ad_id string near its "snapshot": key.
+    if (!is.null(ad_id) && nzchar(ad_id)) {
+        # Find ALL positions of the ad_id in the raw text
+        ad_id_positions <- gregexpr(ad_id, raw_text, fixed = TRUE)[[1]]
+
+        if (ad_id_positions[1] != -1) {
+            # Find ALL positions of "snapshot": in the raw text
+            snap_positions <- gregexpr('"snapshot":', raw_text, fixed = TRUE)[[1]]
+
+            if (snap_positions[1] != -1) {
+                # For each ad_id occurrence, find the nearest "snapshot": that
+                # comes AFTER it. In Facebook's JSON structure, the ad_id
+                # appears before its snapshot data in the same data block.
+                best_snap_pos <- NULL
+                best_distance <- Inf
+
+                for (aid_pos in ad_id_positions) {
+                    # Find snapshot positions that come after this ad_id
+                    after_snaps <- snap_positions[snap_positions > aid_pos]
+                    if (length(after_snaps) > 0) {
+                        # Take the closest one after the ad_id
+                        closest <- after_snaps[1]
+                        distance <- closest - aid_pos
+                        if (distance < best_distance) {
+                            best_distance <- distance
+                            best_snap_pos <- closest
+                        }
+                    }
+                }
+
+                if (!is.null(best_snap_pos)) {
+                    # Extract from after "snapshot": (11 chars)
+                    after_snap <- substring(raw_text, best_snap_pos + 11)
+
+                    # Extract the JSON object using recursive regex
+                    detection <- regexpr(
+                        text = after_snap,
+                        pattern = "\\{(?:[^}{]+|(?R))*+\\}",
+                        perl = TRUE
+                    )
+
+                    if (detection[1] != -1) {
+                        json_str <- stringr::str_sub(
+                            after_snap,
+                            detection[1],
+                            detection[1] + attr(detection, "match.length") - 1
+                        )
+
+                        if (!is.na(json_str) && nzchar(trimws(json_str))) {
+                            return(jsonlite::fromJSON(json_str))
+                        }
+                    }
+                }
+            }
+        }
+        # If ad_id-based search failed, fall through to legacy approach
+    }
+
+    # Legacy fallback: split on "snapshot": and take the first occurrence
     haystackpart <-
-        rawhtmlascharacter %>%
+        raw_text %>%
         stringr::str_split('"snapshot":') %>%
         purrr::pluck(1) %>%
         purrr::pluck(2)
@@ -205,9 +273,11 @@ get_ad_snapshots <- function(ad_id, download = FALSE, mediadir = "data/media",
     while (attempts <= max_retries) {
         attempts <- attempts + 1
 
-        # Navigate to the ad page
+        # Navigate to the ad page using window.location to force a full page
+        # load. Facebook's Ad Library is a SPA; b$Page$navigate() can trigger
+        # client-side routing which reuses stale script tags from previous ads.
         nav_ok <- tryCatch({
-            b$Page$navigate(url)
+            b$Runtime$evaluate(sprintf("window.location.replace('%s')", url))
             TRUE
         }, error = function(e) {
             warning("Browser navigation failed for ad ID: ", ad_id,
@@ -284,8 +354,10 @@ get_ad_snapshots <- function(ad_id, download = FALSE, mediadir = "data/media",
     }
 
     # Try to parse the snapshot JSON, handle errors gracefully
+    # Pass ad_id so detectmysnap can find the correct snapshot in the
+    # multi-ad bundle that Facebook's SSR embeds in script tags
     dataasjson <- tryCatch({
-        detectmysnap(script_seg)
+        detectmysnap(script_seg, ad_id = ad_id)
     }, error = function(e) {
         warning("Failed to parse snapshot JSON for ad ID: ", ad_id, " - ", e$message)
         return(NULL)
@@ -660,18 +732,34 @@ download_media <- function(media_dat,
     }
 }
 
-# Read file endings from r object
+# Detect file type from magic bytes (cross-platform, works on Windows too)
 get_file_ending <- function(file_full_path) {
+    bytes <- tryCatch(
+        readBin(file_full_path, "raw", n = 12),
+        error = function(e) raw(0)
+    )
 
-    file_mime_type <- system2(command = "file",
-                              args = paste0(" -b --mime-type ", file_full_path), stdout = TRUE) # "text/rtf"
-    # Gives the list of potentially allowed extension for this mime type:
-    file_possible_ext <- system2(command = "file",
-                                 args = paste0(" -b --extension ", file_full_path),
-                                 stdout = TRUE) # "???". "doc/dot" for MsWord files.
+    if (length(bytes) < 4) return("jpg")
 
-    return(file_possible_ext)
+    # JPEG: FF D8 FF
+    if (bytes[1] == as.raw(0xFF) && bytes[2] == as.raw(0xD8)) return("jpeg")
+    # PNG: 89 50 4E 47
+    if (bytes[1] == as.raw(0x89) && bytes[2] == as.raw(0x50) &&
+        bytes[3] == as.raw(0x4E) && bytes[4] == as.raw(0x47)) return("png")
+    # GIF: 47 49 46
+    if (bytes[1] == as.raw(0x47) && bytes[2] == as.raw(0x49) &&
+        bytes[3] == as.raw(0x46)) return("gif")
+    # WebP: RIFF....WEBP
+    if (length(bytes) >= 12 &&
+        bytes[1] == as.raw(0x52) && bytes[2] == as.raw(0x49) &&
+        bytes[3] == as.raw(0x46) && bytes[4] == as.raw(0x46) &&
+        bytes[9] == as.raw(0x57) && bytes[10] == as.raw(0x45) &&
+        bytes[11] == as.raw(0x42) && bytes[12] == as.raw(0x50)) return("webp")
+    # BMP: 42 4D
+    if (bytes[1] == as.raw(0x42) && bytes[2] == as.raw(0x4D)) return("bmp")
 
+    # Default fallback
+    "jpg"
 }
 
 # datadir <- "data"

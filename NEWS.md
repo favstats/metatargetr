@@ -1,3 +1,16 @@
+# metatargetr 0.0.7
+
+## Bug fixes
+
+* Fixed `get_ad_snapshots()` always returning data for the wrong ad (e.g.,
+  "Meesho" regardless of requested ad ID). Facebook's server-side rendered
+  script tags now contain a bundle of 25+ ads' snapshot data in a single
+  `<script>` element. The old `detectmysnap()` always extracted the first
+  `"snapshot":` occurrence, which belonged to whichever ad Facebook placed
+  first in the bundle. The function now accepts an `ad_id` parameter, locates
+  the ad ID in the raw text, and extracts the nearest `"snapshot":` JSON
+  object after it, ensuring each ad gets its own correct data.
+
 # metatargetr 0.0.6
 
 ## Bug fixes

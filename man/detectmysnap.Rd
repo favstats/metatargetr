@@ -4,19 +4,26 @@
 \alias{detectmysnap}
 \title{Detect and parse the snapshot JSON from a Facebook Ad Library script tag}
 \usage{
-detectmysnap(rawhtmlascharacter)
+detectmysnap(rawhtmlascharacter, ad_id = NULL)
 }
 \arguments{
 \item{rawhtmlascharacter}{Raw HTML content as character string.}
+
+\item{ad_id}{Character string. The Facebook ad ID to find in the bundle.
+When provided, the function extracts only the snapshot belonging to this
+ad. When NULL, extracts the first snapshot found (legacy behavior).}
 }
 \value{
 A parsed JSON object (list).
 }
 \description{
-Splits the raw HTML on \verb{"snapshot":}, extracts the first JSON object
-using a recursive regex, and parses it with \code{jsonlite::fromJSON()}.
-Includes input validation at each step to produce clear error messages
-instead of cryptic JSON parse failures.
+Facebook's SSR script tags contain a bundle of many ads' snapshot data.
+This function locates the \verb{"snapshot":} occurrence that belongs to the
+requested \code{ad_id} by first finding the ad_id in the raw text and then
+extracting the nearest \verb{"snapshot":} JSON object after it.
+}
+\details{
+Falls back to the original split-based approach when no ad_id is provided.
 }
 \seealso{
 \code{\link[=get_ad_snapshots]{get_ad_snapshots()}} which calls this function internally.
