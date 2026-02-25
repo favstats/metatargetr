@@ -66,4 +66,5 @@ simplified data frame or list indicating the absence of data.
 ``` r
 insights <- get_page_insights(pageid="123456789", timeframe="LAST_30_DAYS", lang="en-GB", iso2c="US",
                               include_info=c("page_info", "targeting_info"), join_info=TRUE)
+#> There was a problem with this request. Try again later.There was a problem with this request. Try again later.
 ```

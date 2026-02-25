@@ -455,6 +455,8 @@ Thank you for your collaboration!
   character vectors
 - [`get_ad_html()`](get_ad_html.md) : Fetch Facebook Ad-Library pages
   (with caching)
+- [`get_ad_library_page_id()`](get_ad_library_page_id.md) : Resolve
+  Facebook Handles to Ad Library Page IDs
 - [`get_ad_report()`](get_ad_report.md) : Get Facebook Ad Library Report
   Data
 - [`get_ad_snapshots()`](get_ad_snapshots.md) : Get ad snapshots from
