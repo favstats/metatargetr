@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metatargetr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,14 @@
       <small>Source: <a href="https://github.com/favstats/metatargetr/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.10" id="metatargetr-0010">metatargetr 0.0.10<a class="anchor" aria-label="anchor" href="#metatargetr-0010"></a></h2>
+<div class="section level3">
+<h3 id="improvements-0-0-10">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-0-10"></a></h3>
+<ul><li><p>Improved <code><a href="../reference/get_ad_library_page_id.html">get_ad_library_page_id()</a></code> reliability for personal profiles: if the profile transparency path fails (often login-gated), it now falls back to extracting <code>delegate_page</code> / <code>associated_page_id</code> from the regular profile HTML.</p></li>
+<li><p>Added local artifact ignore rules to reduce accidental commits from ad-hoc analysis and automation runs (Playwright state, generated HTML/tarballs, local mapping/data files).</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.8" id="metatargetr-008">metatargetr 0.0.8<a class="anchor" aria-label="anchor" href="#metatargetr-008"></a></h2>
 <div class="section level3">

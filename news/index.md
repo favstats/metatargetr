@@ -1,5 +1,19 @@
 # Changelog
 
+## metatargetr 0.0.10
+
+### Improvements
+
+- Improved
+  [`get_ad_library_page_id()`](../reference/get_ad_library_page_id.md)
+  reliability for personal profiles: if the profile transparency path
+  fails (often login-gated), it now falls back to extracting
+  `delegate_page` / `associated_page_id` from the regular profile HTML.
+
+- Added local artifact ignore rules to reduce accidental commits from
+  ad-hoc analysis and automation runs (Playwright state, generated
+  HTML/tarballs, local mapping/data files).
+
 ## metatargetr 0.0.8
 
 ### New features
