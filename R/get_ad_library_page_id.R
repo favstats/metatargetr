@@ -164,6 +164,26 @@ get_ad_library_page_id <- function(handles,
             }
         }
 
+        # Fallback: if transparency page failed (e.g. personal profile requiring
+        # login), try the regular profile page and extract delegate_page ID
+        if (!resolved) {
+            fallback_pid <- tryCatch({
+                profile_url <- paste0("https://www.facebook.com/", handle_i)
+                b$Runtime$evaluate(sprintf("window.location.replace('%s')", profile_url))
+                Sys.sleep(wait_sec)
+                .extract_delegate_page_id(b)
+            }, error = function(e) NA_character_)
+
+            if (!is.na(fallback_pid) && nzchar(fallback_pid) && grepl("^[0-9]{6,}$", fallback_pid)) {
+                out$page_id[[idx]] <- fallback_pid
+                out$ad_library_page_id[[idx]] <- fallback_pid
+                out$ad_library_url[[idx]] <- .build_ad_library_page_url(fallback_pid, country = country)
+                out$ok[[idx]] <- TRUE
+                out$error[[idx]] <- NA_character_
+                resolved <- TRUE
+            }
+        }
+
         if (!resolved && is.na(out$error[[idx]])) {
             out$error[[idx]] <- "Could not resolve Page ID."
         }
@@ -260,6 +280,37 @@ get_ad_library_page_id <- function(handles,
         "&is_targeted_country=false&media_type=all&search_type=page",
         "&view_all_page_id=", utils::URLencode(as.character(page_id))
     )
+}
+
+
+#' Extract delegate_page ID from a Facebook profile page (internal)
+#'
+#' Personal profiles have a "delegate_page" in their page source that contains
+#' the Ad Library page ID. This works without login, unlike the profile
+#' transparency page which requires login for personal profiles.
+#'
+#' @param b A chromote session object currently on a Facebook profile page.
+#' @return Character scalar page ID or `NA_character_`.
+#' @keywords internal
+.extract_delegate_page_id <- function(b) {
+    html <- tryCatch(
+        b$Runtime$evaluate("document.documentElement.outerHTML")$result$value,
+        error = function(e) ""
+    )
+
+    if (!is.character(html) || !nzchar(html)) return(NA_character_)
+
+    # Pattern 1: delegate_page.id in JSON
+    m <- regexec('"delegate_page":\\{"[^}]*"id":"([0-9]{6,})"', html, perl = TRUE)
+    g <- regmatches(html, m)[[1]]
+    if (length(g) >= 2 && nzchar(g[2])) return(g[2])
+
+    # Pattern 2: associated_page_id
+    m2 <- regexec('"associated_page_id":"([0-9]{6,})"', html, perl = TRUE)
+    g2 <- regmatches(html, m2)[[1]]
+    if (length(g2) >= 2 && nzchar(g2[2])) return(g2[2])
+
+    NA_character_
 }
 
 

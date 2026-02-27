@@ -7,3 +7,12 @@ data
 docs
 dev/
 ^html_cache
+
+# Local/automation artifacts
+.playwright-cli/
+README.html
+metatargetr_*.tar.gz
+meta-ad-spend-map/
+get_us_advertisers.R
+wtmdata.csv
+wtmdata.csv.gzip
