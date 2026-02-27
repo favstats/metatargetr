@@ -10,7 +10,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/favstats/metatargetr/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/favstats/metatargetr/blob/v0.0.10/DESCRIPTION)
 
 Votta F, Mendoza P (2026). *metatargetr: Retrieve and Parse Meta Ad
 Targeting Data*. R package version 0.0.10,
