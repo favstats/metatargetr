@@ -1,5 +1,19 @@
 # Changelog
 
+## metatargetr 0.0.11
+
+### Bug fixes
+
+- Fixed
+  [`get_targeting_metadata()`](../reference/get_targeting_metadata.md),
+  which had silently returned an empty tibble since the end of
+  August 2026. It scraped a release’s `expanded_assets` page and read
+  each row by fixed line offset; GitHub added a sha256 digest line to
+  those rows, shifting every offset, so filenames came back empty
+  instead of erroring. Asset rows are now parsed from the DOM (filename
+  from the download link, timestamp from `<relative-time>`), which does
+  not depend on row layout.
+
 ## metatargetr 0.0.10
 
 ### Improvements
@@ -25,6 +39,7 @@
   pagination via GraphQL.
 
   ``` r
+
   browser_session_start()
   # Get all ads from a specific page
   ads <- search_ad_library(page_id = "52985377549")

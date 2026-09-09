@@ -33,6 +33,7 @@ a modified data frame with unnested and deduplicated values
 ## Examples
 
 ``` r
+
 ### example usage:
 ## make sure you have the variable 'archive_id' in your data
 ad_targeting_data %>%

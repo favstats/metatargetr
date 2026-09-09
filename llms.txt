@@ -53,12 +53,14 @@ Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoj
 You can install the development version of metatargetr like so:
 
 ``` r
+
 remotes::install_github("favstats/metatargetr")
 ```
 
 ## Load in Package
 
 ``` r
+
 library(metatargetr)
 ```
 
@@ -75,6 +77,7 @@ data](#retrieve-historical-report-data-from-the-database) from the
 maintained database.
 
 ``` r
+
 
 last30 <- get_targeting(id = "121264564551002", 
                         timeframe = "LAST_30_DAYS")
@@ -93,6 +96,7 @@ page of the VVD (Dutch party) in the last 7 days. Just put in the right
 Page ID.
 
 ``` r
+
 last7 <- get_targeting(id = "121264564551002", 
                        timeframe = "LAST_7_DAYS")
 
@@ -118,6 +122,7 @@ can use the function below to retrieve it.
 > which data for which country and day is present.
 
 ``` r
+
 # # set some parameters
 the_cntry <- "DE"
 tf <- 30
@@ -156,6 +161,7 @@ repository and can be downloaded and read directly into R.
 > failures may lead to missing data for certain days.
 
 ``` r
+
 # # set some parameters
 the_cntry <- "DE"
 tf <- 30
@@ -185,6 +191,7 @@ You can also retrieve some page info of the page that you are interested
 in.
 
 ``` r
+
 page_info <- get_page_insights("121264564551002", include_info = "page_info")
 
 
@@ -238,6 +245,7 @@ targeting data without downloading the actual files.**
 
 ``` r
 
+
 # Retrieve metadata for Germany for the last 30 days
 metadata <- get_targeting_metadata("DE", "30")
 
@@ -271,6 +279,7 @@ Mendoza](https://www.uva.nl/en/profile/m/e/p.m.mendoza/p.m.mendoza.html).
 ### Single ad
 
 ``` r
+
 snap <- get_ad_snapshots("561403598962843")
 ```
 
@@ -281,6 +290,7 @@ browser session. This passes Facebook’s JS challenge once during
 startup, so all subsequent calls are fast.
 
 ``` r
+
 browser_session_start()
 
 results <- map_dfr_progress(ad_ids, ~get_ad_snapshots(.x))
@@ -299,6 +309,7 @@ Setting `download = TRUE` saves images and videos to disk. Use
 collection).
 
 ``` r
+
 get_ad_snapshots("561403598962843", download = TRUE, hashing = TRUE, mediadir = "data/media")
 ```
 
@@ -309,6 +320,7 @@ or more ads and caches results to disk as gzipped files. Useful for
 archiving or downstream parsing with `parse_ad_htmls()`.
 
 ``` r
+
 paths <- get_ad_html(
   ad_ids  = c("561403598962843", "1103135646905363"),
   country = "US"
@@ -324,6 +336,7 @@ metadata beyond what
 `fevInfo`, `free_form_additional_info`, `learn_more_content`).
 
 ``` r
+
 dl <- get_deeplink("561403598962843")
 ```
 
@@ -346,6 +359,7 @@ breakdown, advertiser details, and other metrics.
 
 ``` r
 
+
 ggl_get_spending(advertiser_id = "AR18091944865565769729", 
                  start_date = "2023-10-24", 
                  end_date = "2023-11-22",
@@ -363,6 +377,7 @@ If `get_times` is set to `TRUE`, it returns a tibble with date-wise
 spending data.
 
 ``` r
+
 # Retrieve time-based spending data for the same advertiser and country
 timeseries_dat <- ggl_get_spending(advertiser_id = "AR18091944865565769729",
                                    start_date = "2023-10-24",

@@ -7,6 +7,7 @@ through the [`ggl_get_spending()`](../reference/ggl_get_spending.md)
 function:
 
 ``` r
+
 library(metatargetr)
 library(ggplot2)
 
@@ -24,6 +25,7 @@ spending_data <- ggl_get_spending(
 For temporal analysis, use the `get_times` parameter:
 
 ``` r
+
 # Get time-series data
 timeseries_data <- ggl_get_spending(
   advertiser_id = "AR18091944865565769729",

@@ -7,6 +7,7 @@ maintains an archive of historical targeting data. Access this using
 [`get_targeting_db()`](../reference/get_targeting_db.md):
 
 ``` r
+
 library(metatargetr)
 
 # Set parameters
@@ -29,6 +30,7 @@ For broader historical analysis, use
 [`get_report_db()`](../reference/get_report_db.md):
 
 ``` r
+
 report_data <- get_report_db(
   country_code = "DE",
   timeframe = 30,

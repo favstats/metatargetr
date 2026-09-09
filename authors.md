@@ -10,16 +10,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/favstats/metatargetr/blob/v0.0.10/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/favstats/metatargetr/blob/master/DESCRIPTION)
 
 Votta F, Mendoza P (2026). *metatargetr: Retrieve and Parse Meta Ad
-Targeting Data*. R package version 0.0.10,
+Targeting Data*. R package version 0.0.11,
 <https://github.com/favstats/metatargetr>.
 
     @Manual{,
       title = {metatargetr: Retrieve and Parse Meta Ad Targeting Data},
       author = {Fabio Votta and Philipp Mendoza},
       year = {2026},
-      note = {R package version 0.0.10},
+      note = {R package version 0.0.11},
       url = {https://github.com/favstats/metatargetr},
     }

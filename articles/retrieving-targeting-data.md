@@ -6,6 +6,7 @@ The [`get_targeting()`](../reference/get_targeting.md) function allows
 you to retrieve targeting data for specific time windows:
 
 ``` r
+
 library(metatargetr)
 
 # Last 7 days
@@ -33,6 +34,7 @@ Use [`get_page_insights()`](../reference/get_page_insights.md) to
 retrieve additional page information:
 
 ``` r
+
 page_info <- get_page_insights("121264564551002", include_info = "page_info")
 ```
 

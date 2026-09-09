@@ -17,6 +17,7 @@ about:
 ## Basic Usage
 
 ``` r
+
 library(metatargetr)
 
 # Get metadata for Germany's 30-day data

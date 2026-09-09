@@ -12,6 +12,7 @@ and includes integration with the Google Transparency Report.
 You can install the development version of metatargetr from GitHub:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("favstats/metatargetr")
 ```
@@ -21,6 +22,7 @@ remotes::install_github("favstats/metatargetr")
 First, load the package:
 
 ``` r
+
 library(metatargetr)
 ```
 
