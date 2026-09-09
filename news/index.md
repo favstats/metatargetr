@@ -14,6 +14,11 @@
   from the download link, timestamp from `<relative-time>`), which does
   not depend on row layout.
 
+- `parse_release_assets()` now errors when a release page yields asset
+  rows but no download links at all, so a future markup change surfaces
+  immediately instead of silently returning nothing. Covered by
+  `test-release_assets.R`.
+
 ## metatargetr 0.0.10
 
 ### Improvements

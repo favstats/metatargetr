@@ -46,7 +46,7 @@ report_data <- get_report_db(
   verbose = TRUE
 )
 #> Constructed URL: https://github.com/favstats/meta_ad_reports/releases/download/DE-last_30_days/2024-12-25.rds
-#> Downloading to temporary file: /tmp/RtmpPU1GA1/file21c5294d1151.rds
+#> Downloading to temporary file: /tmp/RtmpkOy2Zw/file2018405a527b.rds
 #> File successfully downloaded.
 #> Data successfully read from the RDS file.
 #> Temporary file deleted.

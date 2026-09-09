@@ -43,7 +43,8 @@
 <h2 class="pkg-version" data-toc-text="0.0.11" id="metatargetr-0011">metatargetr 0.0.11<a class="anchor" aria-label="anchor" href="#metatargetr-0011"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-0-0-11">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-11"></a></h3>
-<ul><li>Fixed <code><a href="../reference/get_targeting_metadata.html">get_targeting_metadata()</a></code>, which had silently returned an empty tibble since the end of August 2026. It scraped a release’s <code>expanded_assets</code> page and read each row by fixed line offset; GitHub added a sha256 digest line to those rows, shifting every offset, so filenames came back empty instead of erroring. Asset rows are now parsed from the DOM (filename from the download link, timestamp from <code>&lt;relative-time&gt;</code>), which does not depend on row layout.</li>
+<ul><li><p>Fixed <code><a href="../reference/get_targeting_metadata.html">get_targeting_metadata()</a></code>, which had silently returned an empty tibble since the end of August 2026. It scraped a release’s <code>expanded_assets</code> page and read each row by fixed line offset; GitHub added a sha256 digest line to those rows, shifting every offset, so filenames came back empty instead of erroring. Asset rows are now parsed from the DOM (filename from the download link, timestamp from <code>&lt;relative-time&gt;</code>), which does not depend on row layout.</p></li>
+<li><p><code>parse_release_assets()</code> now errors when a release page yields asset rows but no download links at all, so a future markup change surfaces immediately instead of silently returning nothing. Covered by <code>test-release_assets.R</code>.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
