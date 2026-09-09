@@ -27,6 +27,20 @@ parse_release_assets <- function(html_content) {
     rvest::html_element("a[href*='/releases/download/']") %>%
     rvest::html_attr("href")
 
+  # A release page always carries two non-asset "Source code" rows. If there are
+  # more rows than that and not one of them is a download link, the selector no
+  # longer matches GitHub's markup. Say so, rather than quietly returning
+  # nothing and letting callers build a download URL with an empty filename -
+  # that silent mode is what turned the August 2026 markup change into a
+  # nine-day outage nobody noticed.
+  if (length(rows) > 2 && !any(!is.na(href))) {
+    stop(
+      "Parsed ", length(rows), " release rows but found no download links. ",
+      "GitHub's release asset markup has changed; parse_release_assets() needs updating.",
+      call. = FALSE
+    )
+  }
+
   timestamp <- rows %>%
     rvest::html_element("relative-time") %>%
     rvest::html_attr("datetime")
