@@ -230,16 +230,7 @@ get_targeting_metadata <- function(country_code,
 
     html_content <- xml2::read_html(httr::content(response, as = "text", encoding = "UTF-8"))
 
-    raw_elements <- rvest::html_elements(html_content, ".Box-row") %>%
-        rvest::html_text()
-
-    metadata <- tibble::tibble(raw = raw_elements) %>%
-        dplyr::mutate(raw = strsplit(as.character(raw), "\n")) %>%
-        dplyr::transmute(
-            filename = sapply(raw, function(x) trimws(x[3])),
-            file_size = sapply(raw, function(x) trimws(x[6])),
-            timestamp = sapply(raw, function(x) trimws(x[7]))
-        ) %>%
+    metadata <- parse_release_assets(html_content) %>%
         dplyr::filter(filename != "Source code") %>%
         dplyr::mutate(release = paste0(country_code, timeframe_suffix)) %>%
         dplyr::mutate_all(as.character) %>%
